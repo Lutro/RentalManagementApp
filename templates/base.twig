@@ -7,9 +7,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <link rel="stylesheet" href="styles/style.css" />
     <!--Bootstrap-->
     {{include("bootstrap.twig")}}
+    <link rel="stylesheet" href="styles/styles.css" />
     <title>
         {# {% block title %}
         {% include "title.twig.html" %}
@@ -19,29 +19,30 @@
 </head>
 
 <body>
-    <div id="box-container">
+    <div class="jumbotron">
 
-        {# {% block header %}
-            {% include "header.twig.html" %}
-        {% endblock header %}
+        {% block header %}
+            {% include "header.twig" %}
+        {% endblock header %} 
+        
         {% block navigation %}
-            {% include "nav.twig.html" %}
+            {% include "nav.twig" %}
         {% endblock navigation %}
+        
+        {% block main %}
         <main id="main">
             <article id="article">
             {% block article %}
             {% endblock article %}
             </article>
 
-        {% block section %}
-        
-        {% endblock section %}
+            {% block section %}
+            
+            {% endblock section %}
         </main>
-
-        {% block footer %}
-            {% include "footer.twig.html" %}
-        {% endblock footer %} #}
-        <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+        {% endblock main %}
+    
+        {# <!-- Stack the columns on mobile by making one full-width and the other half-width -->
         <div class="row">
             <div class="col-xs-12 col-md-8">.col-xs-12 .col-md-8</div>
             <div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
@@ -58,7 +59,10 @@
         <div class="row">
             <div class="col-xs-6">.col-xs-6</div>
             <div class="col-xs-6">.col-xs-6</div>
-        </div>
+        </div> #}
+        {% block footer %}
+            {% include "footer.twig" %}
+        {% endblock footer %}
     </div>
 
 
