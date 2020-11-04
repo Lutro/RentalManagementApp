@@ -30,6 +30,7 @@ update operation:
 	update suite information (e.g. rent)
 	update parking stall information (assign parking spot to tenant)
 extra features:
+	using bootstrap
 	privileges for tenant vs. manager
 	triggers: calculate rent amount for suite (base + parking stall + deposit? pets?)
 	stored procedure: set hasPaid attribute in tenant to false every month
