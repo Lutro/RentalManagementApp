@@ -1,0 +1,28 @@
+{% extends 'base.twig' %}
+
+{% block main %}
+<h1>{{ heading }}</h1>
+    <table class="generic_table">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>{% for key in keys %}
+                {% autoescape false %}
+                 <th>{{ key }}</th>
+                {% endautoescape %}
+                {% endfor %}
+            </tr>
+            
+            {%for rest in table %}
+            <tr>
+                {%for key in keys%}
+                {% autoescape false %}
+                   <td>{{ rest[key] }}</td>
+                   {% endautoescape %}
+                {% endfor %}
+            </tr>            
+            {% endfor %}
+        </tbody>
+
+    <table>
+{% endblock main %}

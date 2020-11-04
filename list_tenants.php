@@ -7,23 +7,25 @@ $dbh = get_database_object();
 /* check connection */
 terminate_on_connect_error();
 
-$tenantQuery = $dbh->prepare('call getSuites()');
+$tenantQuery = $dbh->prepare('call getTenants()');
 $success = $tenantQuery->execute();
 
 terminate_on_query_error($success); //program will terminate on error
 
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
-
-$keys = ["suiteNumber","bedrooms","bathrooms","rentAmount","size", "hasMasterKey"];
+// for($x=0; $x < count($resultArray); $x += 1){
+//     $resultArray[$x] += ["link"=>"<a href='visitByRestaurant.php?rid=".$resultArray[$x]["ID"]."'>Visits</a>"];
+// }
+$keys = ["name","phone","email","numberOfBikes","storageLockerNumber","numberOfPets", "leaseStart", "leaseEnd"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
-                 "page_title"=>"Apartment Suites", 
-                 "heading"=>"Apartment Suites",
+                 "page_title"=>"Tenant List", 
+                 "heading"=>"Tenants",
                  "table" => $resultArray,
                  "keys" => $keys ];
 
 
-render_page("list-of-suites.twig", $renderParams);
+render_page("generic-table.twig", $renderParams);

@@ -12,7 +12,6 @@
     show all repair orders where status is imcomplete
 
 
-
 #Join query : 
     (Show the repair order)
         View an inspection's: suiteNumber, reason, description
@@ -33,10 +32,9 @@
     Show all suites without a tenant
     Show all types of contractors without a contractor name
     Show all suites that haven't had an inspection in more than 6 months
-    Show all the repair orders that haven't been assigned to a contractor
+    Show all the repair orders that haven't been assigned to a contractor    
 
-
-#Aggregation query : `
+#Aggregation query : 
     Calculate rent from suite rent + parking stall rent
     Count current number of empty suites
     Calculate lease period form lease start and lease end
@@ -55,10 +53,7 @@
     WHERE director = name
 
 
-`
-
 #Delete operation : 
-    Remove a tenant from the building
     Remove a contractor
 
 #Update Operation : 
@@ -67,3 +62,7 @@
     Assign a contractor to a repair order
     Update rent when a tenant has paid rent to 0 (balance?)
 
+
+
+How much money was spent on a suite per year?
+Pie chart of work types( e.g. electrical, h-vac, appliances, painting, parts, cleaning, maintenance, construction, miscelleaneous, plumbing)

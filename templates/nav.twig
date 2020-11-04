@@ -1,14 +1,5 @@
 <ul class="nav md-tabs light-blue lighten-1 mx-0 mb-0 mt-1">
-  <li class="nav-item">
-    <a class="nav-link active" href="#!">Active</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#!">Link 1</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#!">Link 2</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#!">Link 3</a>
-  </li>
+  {% for link in nav %}
+  <li class="nav-item"><a class="nav-link" href="{{link.link}}">{{link.text}}</a></li>
+  {% endfor %}
 </ul>

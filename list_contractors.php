@@ -7,7 +7,7 @@ $dbh = get_database_object();
 /* check connection */
 terminate_on_connect_error();
 
-$tenantQuery = $dbh->prepare('call getSuites()');
+$tenantQuery = $dbh->prepare('call getContractors()');
 $success = $tenantQuery->execute();
 
 terminate_on_query_error($success); //program will terminate on error
@@ -15,15 +15,15 @@ terminate_on_query_error($success); //program will terminate on error
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
-$keys = ["suiteNumber","bedrooms","bathrooms","rentAmount","size", "hasMasterKey"];
+$keys = ["name","phoneNumber","company","address","email", "workType"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
-                 "page_title"=>"Apartment Suites", 
-                 "heading"=>"Apartment Suites",
+                 "page_title"=>"List of Contractors", 
+                 "heading"=>"Contractors",
                  "table" => $resultArray,
                  "keys" => $keys ];
 
 
-render_page("list-of-suites.twig", $renderParams);
+render_page("generic-table.twig", $renderParams);
