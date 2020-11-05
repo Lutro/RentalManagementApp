@@ -20,8 +20,8 @@ $keys = ["repairID","suiteNumber", "priority", "type", "startDate", "endDate", "
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
-                 "page_title"=>"Apartment Suites", 
-                 "heading"=>"Apartment Suites",
+                 "page_title"=>"Repair Orders", 
+                 "heading"=>"Repair Orders",
                  "table" => $resultArray,
                  "keys" => $keys ];
 

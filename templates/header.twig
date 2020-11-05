@@ -1,13 +1,12 @@
-<header>
-    <div class="header">
-        <div class="logo">[]</div>
-        <div class="marquee">
-            <div class="text">
-                {{ title }}
-            </div>
-        </div>
-        <div class=""> {% autoescape false %}
+<header class="jumbotron">
+<div class="col-12" class="col-md-8">
+
+            {{ title }}
+      
+</div>
+<div class="col-6" class="col-md-4">
+{% autoescape false %}
     {{address}}
-    {% endautoescape %} </div>
-    </div>
+{% endautoescape %}
+</div>
 </header>

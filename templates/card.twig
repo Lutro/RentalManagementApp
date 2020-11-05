@@ -1,38 +1,41 @@
 {% for rest in table %}
-    <div class="card hovercard">
+<div class="row">
+    <div class="col-sm-4">
+     <div class="card hovercard text-center">
+            <div class="cardheader">
+                <div class="avatar">
+                {# <img alt="" src="<?php echo $record['image']; ?>"> #}
+                </div>
+            </div>
+            
+            <div class="card-body info">
+            {% for key in keys %}
+                <div class="title">
+                    <a href="#">
+                    {{ key }}
+                    </a>
+                </div>
 
-        <div class="cardheader">
-            <div class="avatar">
-            {# <img alt="" src="<?php echo $record['image']; ?>"> #}
+                <div class="desc">
+                {{ rest[key] }} 
+                </div>
+            {% endfor %}
             </div>
-        </div>
-        
-        <div class="card-body info">
-        {% for key in keys %}
-            <div class="title">
-                <a href="#">
-                {{ key }}
-                </a>
+            <div class="card-footer bottom">
+            <a class="btn btn-primary btn-twitter btn-sm" href="">
+            <i class="fa fa-twitter"></i>
+            </a>
+            <a class="btn btn-danger btn-sm" rel="publisher"
+            href="">
+            <i class="fa fa-google-plus"></i>
+            </a>
+            <a class="btn btn-primary btn-sm" rel="publisher"
+            href="">
+            <i class="fa fa-facebook"></i>
+            </a>
             </div>
-
-            <div class="desc">
-            {{ rest[key] }} 
-            </div>
-        {% endfor %}
-        </div>
-        <div class="card-footer bottom">
-        <a class="btn btn-primary btn-twitter btn-sm" href="">
-        <i class="fa fa-twitter"></i>
-        </a>
-        <a class="btn btn-danger btn-sm" rel="publisher"
-        href="">
-        <i class="fa fa-google-plus"></i>
-        </a>
-        <a class="btn btn-primary btn-sm" rel="publisher"
-        href="">
-        <i class="fa fa-facebook"></i>
-        </a>
         </div>
     </div>
+</div>
 
 {% endfor %}
