@@ -30,11 +30,11 @@ function navList(){
 
 // Defines the address element for a page
 function address(){
-    return "Langara College<br>".
-            "100 West 49th Avenue<br>".
+    return "Golden Otters Apartments<br>".
+            "123 Margarita Avenue<br>".
             "Vancouver B.C.<br>".
             "Canada V5Y 2Z6<br>".
-            "604.323.5511<br>";
+            "604.555.5511<br>";
 
 }
 

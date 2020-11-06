@@ -16,15 +16,16 @@
     
 </head>
 
-<body class="container-fluid">
-        {% block header %}
-            {% include "header.twig" %}
-        {% endblock header %} 
+<body class="container-fluid pt-3">
         
         {% block navigation %}
             {% include "nav.twig" %}
         {% endblock navigation %}
         
+        {% block header %}
+            {% include "header.twig" %}
+        {% endblock header %} 
+
         {% block main %}
         <main id="main">
             <article id="article">

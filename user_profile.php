@@ -7,23 +7,22 @@ $dbh = get_database_object();
 /* check connection */
 terminate_on_connect_error();
 
-$tenantQuery = $dbh->prepare('call getSuites()');
+$tenantQuery = $dbh->prepare('call getManager()');
 $success = $tenantQuery->execute();
 
 terminate_on_query_error($success); //program will terminate on error
 
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
-
-$keys = ["suiteNumber","bedrooms","bathrooms","rentAmount","size", "hasMasterKey"];
+$keys = ["name","email","phone","managerSince"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
-                 "page_title"=>"Apartment Suites", 
-                 "heading"=>"Apartment Suites",
-                 "table" => $resultArray,
-                 "keys" => $keys ];
+                 "page_title"=>"Manager Profile", 
+                 "keys"=>$keys,
+                 "heading"=>"Manager",
+                 "users"=>$resultArray];
 
 
-render_page("generic-table.twig", $renderParams);
+render_page("user-profile.twig", $renderParams);

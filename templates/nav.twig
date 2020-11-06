@@ -3,17 +3,18 @@
 </ul>
 <!--Navbar -->
 <nav class="mb-1 navbar navbar-expand-lg navbar-dark orange lighten-1">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand" href="#">Renty</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-555"
     aria-controls="navbarSupportedContent-555" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
-    <ul class="navbar-nav mr-auto">
+    <ul class="nav navbar-nav navbar-right">
     {% for link in nav %}
       <li class="nav-item"><a class="nav-link" href="{{link.link}}">{{link.text}}</a></li>
     {% endfor %}  
-    <ul class="navbar-nav ml-auto nav-flex-icons">
+    </ul>
+    <ul class="nav navbar-nav">
       <li class="nav-item avatar">
         <a class="nav-link p-0" href="#">
           <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" class="rounded-circle z-depth-0"
