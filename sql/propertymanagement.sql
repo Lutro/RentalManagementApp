@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2020 at 06:32 AM
+-- Generation Time: Nov 06, 2020 at 09:51 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
@@ -20,6 +20,43 @@ SET time_zone = "+00:00";
 --
 -- Database: `propertymanagement`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractors` ()  NO SQL
+SELECT *
+FROM contractor$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getManager` ()  NO SQL
+SELECT occupant.name, occupant.email, occupant.phone, manager.managerSince
+FROM occupant
+INNER JOIN manager ON occupant.ID = manager.ID
+WHERE manager.managerUntil IS NULL$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrders` ()  NO SQL
+SELECT repairID,suiteNumber, priority, type, startDate, endDate, inspectionDate
+FROM generatesrepairorder$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuites` ()  NO SQL
+SELECT suite.suiteNumber, suite.bedrooms, suite.bathrooms, suite.rentAmount, suitesize.size, suite.hasMasterKey
+FROM suite
+INNER JOIN suitesize ON suite.bedrooms = suitesize.bedrooms 
+AND suite.bathrooms = suitesize.bathrooms$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesRent` ()  NO SQL
+SELECT suite.suiteNumber, occupant.name, suite.rentAmount
+FROM suite
+INNER JOIN livesin ON suite.suiteNumber = livesin.suiteNumber
+INNER JOIN occupant ON livesin.tenantID = occupant.ID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTenants` ()  NO SQL
+SELECT occupant.name, occupant.phone, occupant.email, occupant.numberOfBikes, occupant.storageLockerNumber, tenant.numberOfPets, tenant.leaseStart, tenant.leaseEnd
+FROM occupant
+INNER JOIN tenant ON occupant.ID = tenant.ID$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -300,6 +337,7 @@ INSERT INTO `quote` (`type`, `priority`, `quoteAmount`) VALUES
 --
 
 CREATE TABLE `suite` (
+  `picture` varchar(100) NOT NULL,
   `suiteNumber` int(11) NOT NULL COMMENT 'Suite number',
   `bedrooms` int(11) NOT NULL COMMENT 'Number of bedrooms',
   `bathrooms` int(11) NOT NULL COMMENT 'Number of bathrooms',
@@ -311,12 +349,12 @@ CREATE TABLE `suite` (
 -- Dumping data for table `suite`
 --
 
-INSERT INTO `suite` (`suiteNumber`, `bedrooms`, `bathrooms`, `rentAmount`, `hasMasterKey`) VALUES
-(101, 2, 2, 2200, 1),
-(102, 1, 1, 1250, 1),
-(103, 2, 1, 1775, 1),
-(104, 1, 1, 1300, 1),
-(105, 2, 2, 2500, 0);
+INSERT INTO `suite` (`picture`, `suiteNumber`, `bedrooms`, `bathrooms`, `rentAmount`, `hasMasterKey`) VALUES
+('', 101, 2, 2, 2200, 1),
+('', 102, 1, 1, 1250, 1),
+('', 103, 2, 1, 1775, 1),
+('', 104, 1, 1, 1300, 1),
+('', 105, 2, 2, 2500, 0);
 
 -- --------------------------------------------------------
 
