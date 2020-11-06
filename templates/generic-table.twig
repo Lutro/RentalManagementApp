@@ -16,7 +16,7 @@
             
             {%for rest in table %}
             <tr>
-                {%for key in keys%}
+                {% for key in keys%}
                 {% autoescape false %}
                    <td>{{ rest[key] }}</td>
                    {% endautoescape %}
