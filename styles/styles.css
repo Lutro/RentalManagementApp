@@ -4,7 +4,6 @@
     It doesn’t include any class or ID selectors. It is defining the default 
     styling for how that element should look in all occurrences on the page.
 */
-#main,
 body {
   font-family: "Poppins", Arial, sans-serif;
   font-size: 14px;
