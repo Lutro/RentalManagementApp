@@ -1,3 +1,5 @@
+--notes from nov 3 meeting--
+
 projection query:
 	select (suite#, beds, baths, size, rent) all suites
 	select (certain columns from) all occupants
