@@ -1,0 +1,36 @@
+projection query:
+	select (suite#, beds, baths, size, rent) all suites
+	select (certain columns from) all occupants
+selection query:
+	select all current tenants (where = lease end date > current date)
+	repair orders with incomplete status
+	suites with inspections more than 6 months ago
+join query:
+	get phone number of contractors currently working on a repair order
+	show repair orders with all other information (i.e. inspection + suite info)
+	find phone numbers of all tenants with a parking spot (in case of issue with car)
+	show which tenants live in a suite with cohabitation table + suite info + tenant info + lease period (can calculate with start + end dates)
+	map of parking lot (hover over stalls to get tenant info)
+division query:
+	suites that have had all contractors work on them
+aggregation query:
+	count number of inspections per reason
+	# of suites per #bedrooms (note: 0 bedrooms = studio)
+	number of repair orders per work type
+nested aggregation with group-by:
+	average quote amount for repair orders
+	average cost or number of repair orders per suite
+delete operation: 
+	if a suite is deleted, all inspections should be deleted (cascade-on-delete)
+	remove tenant
+	remove contractor 
+update operation:
+	updating occupant information
+	updating repair order assignments (assign contractor to repair order)
+	update suite information (e.g. rent)
+	update parking stall information (assign parking spot to tenant)
+extra features:
+	using bootstrap
+	privileges for tenant vs. manager
+	triggers: calculate rent amount for suite (base + parking stall + deposit? pets?)
+	stored procedure: set hasPaid attribute in tenant to false every month
