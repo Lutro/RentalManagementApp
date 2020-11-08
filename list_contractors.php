@@ -1,3 +1,20 @@
+<!-- /**
+ * Lists all contractors on a table.(no period for file headers)
+ *
+ * Gets array of values from sql using the keys to access the result array and displays values on a table.
+ *
+ * @see Function/method/class relied on
+ * @link http://localhost/CPSC2221_Project/
+ * @global type $varname Description.
+ * @global type $varname Description.
+ *
+ * @param type $var Description.
+ * @param type $var Optional. Description. Default.
+ * @return type Description.
+ Arrays
+ * @type type $key Description. Default 'value'. Accepts 'value', 'value'.
+*                     (aligned with Description, if wraps to a new line)
+*/ -->
 <?php
 require_once 'scripts/helper.php';
 

@@ -1,0 +1,48 @@
+{% extends "dashboard.twig" %}
+{% block dashboard_content %}
+{% for suite in suites %}
+
+
+    <div class="card user-card-full">
+        <div class="row m-l-0 m-r-0">
+            <div class="col-sm-4 bg-c-lite-green user-profile">
+                <div class="card-block text-center text-white">
+                    <h6 class="f-w-600 lead"> {{ suite.suiteNumber }}</h6>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                            <div class="card-block">
+                                <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Suite Information</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Bedrooms</p>
+                                        <h6 class="text-muted f-w-400">{{ suite.Bedrooms }}</h6>
+                                    </div>
+                                        <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Bathrooms</p>
+                                        <h6 class="text-muted f-w-400">{{ suite.Bathrooms }}</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Occupants</p>
+                                        <h6 class="text-muted f-w-400">{{ suite.Occupants }}</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Number of Pets</p>
+                                        <h6 class="text-muted f-w-400">{{ suite.Pets }}</h6>
+                                    </div>
+                                     <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Lease Start</p>
+                                        <h6 class="text-muted f-w-400">{{ suite.LeaseStart }}</h6>
+                                    </div>
+                                       <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Lease End</p>
+                                        <h6 class="text-muted f-w-400">{{ suite.LeaseEnd }}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        </div>
+    </div>
+
+{% endfor %}
+{% endblock dashboard_content %}
