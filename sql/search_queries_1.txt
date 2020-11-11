@@ -1,26 +1,26 @@
 getRepairOrderStats: number of repair orders per work type
-keys=[type, repairOrders]
+keys=["type", "repairOrders"]
 
 getNumSuitesByBeds: number of suites per number of bedrooms
-keys=[bedrooms, numSuites]
+keys=["bedrooms", "numSuites"]
 
 getIncompleteRepairOrders: repair orders with incomplete status
-keys=[repairID, suiteNumber, priority, type, startDate, endDate, inspectionDate]
+keys=["repairID", "suiteNumber", "priority", "type", "startDate", "endDate", "inspectionDate"]
 
 getInspectionStats: number of inspections per reason
-keys=[reason, inspections]
+keys=["reason", "inspections"]
 
 getSuiteOccupancy: suite occupancy info (number of occupants, pets, etc)
-keys=[suiteNumber, Bedrooms, Bathrooms, Occupants, Pets, LeaseStart, LeaseEnd]
+keys=["suiteNumber", "Bedrooms", "Bathrooms", "Occupants", "Pets", "LeaseStart", "LeaseEnd"]
 
 getParkingStalls: get parking stalls with corresponding tenant info
-keys=[stallNumber, rentAmount, isAccessible, name, phone, email, suiteNumber]
+keys=["stallNumber", "rentAmount", "isAccessible", "name", "phone", "email", "suiteNumber"]
 
 getSuitesAllWorkedOn: suites that have had all contractors work on them (division query)
-keys=[suiteNumber, TotalRepairs]
+keys=["suiteNumber", "TotalRepairs"]
 
 getSuitesRequiringInspection: suites with inspections more than 6 months ago
-keys=[suiteNumber, dateOfInspection, reason, description]
+keys=["suiteNumber", "dateOfInspection", "reason", "description"]
 
 getRepairOrdersPerSuite: number of repair orders per suite
-keys=[suiteNumber, repairOrders]
+keys=["suiteNumber", "repairOrders"]
