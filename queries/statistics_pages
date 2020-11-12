@@ -1,14 +1,14 @@
 --ideas for stats pages--
 
-tenant/occupant stats:
--total building occupants
+tenant/occupant stats:*
+*-total building occupants
 -average number of occupants per suite
 -average number of pets per tenant
--average length of tenancy for current residents
+*average length of tenancy for current residents
 -average length of tenancy historically
 -total number of bikes in the building
--age distribution of residents (0-10,11-19,20-39,40-65,65+)
--number of storage lockers in use
+*-age distribution of residents (0-10,11-19,20-39,40-65,65+) 
+*-number of storage lockers in use
 
 parking lot stats:
 -total number of regular parking stalls in use/number available
@@ -18,14 +18,14 @@ parking lot stats:
 
 suite stats:
 -total number of suites in the building
--total suites occupied/total available
--how much money was spent on a suite per year (in repair costs)
--number of suites per bedrooms/bathrooms
+*-total suites occupied/total available
+*-how much money was spent on a suite per year (in repair costs)
+*-number of suites per bedrooms/bathrooms
 -average size of suite (can also do this per num beds type)
--average rent price of suite (can also do this per num bed type)
+*-average rent price of suite (can also do this per num bed type)
 -average number of inspections per suite (of all time + of current tenancies)?
 -number of inspections per reason
--suites that haven't been inspected in 6 months or more
+*-suites that haven't been inspected in 6 months or more
 -top 10 suites with the most repairs or cost (maybe work in the division query here)
 -how many inspections in the last 6 months/year/2 years?
 -what percentage of inspections leads to a repair order?
@@ -34,11 +34,11 @@ suite stats:
 
 repair/cost stats:
 -pie chart of work types?
--number of repair orders per work type
--average length of repair (can derive from startdate and enddate)
+*-number of repair orders per work type
+*-average length of repair (can derive from startdate and enddate)
 -number of repair orders per priority (historically + currently)
 -average quote amount per order; per work type order
--total spent over time on all repair orders; + per work type
+*-total spent over time on all repair orders; + per work type
 -current repair orders in progress/unassigned
 -number of repair orders or money spent over time (graph)
 

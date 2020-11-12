@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 06, 2020 at 09:51 PM
+-- Generation Time: Nov 12, 2020 at 11:50 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
@@ -29,15 +29,58 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractors` ()  NO SQL
 SELECT *
 FROM contractor$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getIncompleteRepairOrders` ()  NO SQL
+    COMMENT 'repair orders with incomplete status'
+SELECT generatesrepairorder.repairID, suiteNumber, priority, type, startDate, endDate, inspectionDate
+FROM `generatesrepairorder`
+INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
+WHERE status LIKE 'in progress'$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getInspectionStats` ()  NO SQL
+    COMMENT 'number of inspections per reason'
+SELECT reason, COUNT(reason) as inspections
+FROM hasinspection
+GROUP BY reason$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getManager` ()  NO SQL
 SELECT occupant.name, occupant.email, occupant.phone, manager.managerSince
 FROM occupant
 INNER JOIN manager ON occupant.ID = manager.ID
 WHERE manager.managerUntil IS NULL$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getParkingStalls` ()  NO SQL
+    COMMENT 'get parking stalls with corresponding tenant info'
+SELECT stallNumber, rentAmount, isAccessible, occupant.name, occupant.phone, occupant.email, livesin.suiteNumber
+FROM `hasparkingstall` 
+INNER JOIN occupant ON occupant.ID = hasparkingstall.tenantID
+INNER JOIN livesin ON livesin.tenantID = occupant.ID$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrders` ()  NO SQL
 SELECT repairID,suiteNumber, priority, type, startDate, endDate, inspectionDate
 FROM generatesrepairorder$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrdersPerSuite` ()  NO SQL
+    COMMENT 'number of repair orders per suite'
+SELECT suite.suiteNumber, COUNT(repairID) as repairOrders
+FROM suite
+INNER JOIN generatesrepairorder ON generatesrepairorder.suiteNumber = suite.suiteNumber
+GROUP BY suiteNumber$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrderStats` ()  NO SQL
+    COMMENT 'number of repair orders per work type'
+SELECT type, COUNT(repairID) as repairOrders
+FROM generatesrepairorder
+GROUP BY type$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteOccupancy` ()  NO SQL
+    COMMENT 'suite info (number of occupants, pets, etc)'
+SELECT livesin.suiteNumber, suite.bedrooms AS Bedrooms, suite.bathrooms as Bathrooms, COUNT(cohabitateswith.tenantA) AS Occupants, tenant.numberOfPets AS Pets, tenant.leaseStart AS LeaseStart, tenant.leaseEnd AS LeaseEnd
+FROM occupant
+INNER JOIN livesin ON livesin.tenantID = occupant.ID
+INNER JOIN cohabitateswith ON cohabitateswith.tenantA = occupant.ID
+INNER JOIN tenant ON tenant.ID = occupant.ID
+INNER JOIN suite ON suite.suiteNumber = livesin.suiteNumber
+GROUP BY livesin.suiteNumber$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuites` ()  NO SQL
 SELECT suite.suiteNumber, suite.bedrooms, suite.bathrooms, suite.rentAmount, suitesize.size, suite.hasMasterKey
@@ -45,11 +88,36 @@ FROM suite
 INNER JOIN suitesize ON suite.bedrooms = suitesize.bedrooms 
 AND suite.bathrooms = suitesize.bathrooms$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesAllWorkedOn` ()  NO SQL
+    COMMENT 'suites that have had all contractors work on them (division)'
+SELECT sx.suiteNumber, COUNT(generatesrepairorder.repairID) as TotalRepairs
+FROM suite as sx
+INNER JOIN generatesrepairorder ON generatesrepairorder.suiteNumber = sx.suiteNumber
+INNER JOIN assignedto ON assignedto.repairID = generatesrepairorder.repairID
+WHERE NOT EXISTS (
+(SELECT p.name, p.phoneNumber 
+ FROM contractor as p )
+EXCEPT
+(SELECT assignedto.contractorName, assignedto.contractorPhone 
+ FROM assignedto 
+ INNER JOIN generatesrepairorder ON generatesrepairorder.repairID = assignedto.repairID 
+ INNER JOIN suite ON suite.suiteNumber = generatesrepairorder.suiteNumber 
+ INNER JOIN contractor ON contractor.phoneNumber = assignedto.contractorPhone 
+ WHERE suite.suiteNumber = sx.suiteNumber ) 
+)$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesRent` ()  NO SQL
 SELECT suite.suiteNumber, occupant.name, suite.rentAmount
 FROM suite
 INNER JOIN livesin ON suite.suiteNumber = livesin.suiteNumber
 INNER JOIN occupant ON livesin.tenantID = occupant.ID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesRequiringInspection` ()  NO SQL
+    COMMENT 'suites with inspections more than 6 months ago'
+SELECT hasinspection.suiteNumber, dateOfInspection, reason, description
+FROM hasinspection
+INNER JOIN suite ON suite.suiteNumber = hasinspection.suiteNumber
+WHERE DATE(hasinspection.dateOfInspection) < DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getTenants` ()  NO SQL
 SELECT occupant.name, occupant.phone, occupant.email, occupant.numberOfBikes, occupant.storageLockerNumber, tenant.numberOfPets, tenant.leaseStart, tenant.leaseEnd
@@ -81,7 +149,11 @@ INSERT INTO `assignedto` (`repairID`, `contractorName`, `contractorPhone`, `assi
 (55239, 'Nicolas Reese', '6043554383', '2010-08-03', 'complete'),
 (55240, 'Caleb Mcneill', '6046496425', '2002-12-23', 'complete'),
 (55241, NULL, NULL, '2020-01-27', 'in progress'),
-(55242, 'Caleb Mcneill', '6046496425', '2008-02-24', 'complete');
+(55242, 'Caleb Mcneill', '6046496425', '2008-02-24', 'complete'),
+(55243, 'Tim Bruce', '6043308521', '2020-03-05', 'complete'),
+(55244, 'Tim Bruce', '6043308521', '2020-03-25', 'complete'),
+(55245, 'Nicolas Reese', '6043554383', '2015-08-03', 'complete'),
+(55246, 'Caleb Mcneill', '6046496425', '2003-01-09', 'complete');
 
 -- --------------------------------------------------------
 
@@ -103,7 +175,11 @@ INSERT INTO `cohabitateswith` (`tenantA`, `tenantB`) VALUES
 (2, 8),
 (6, 10),
 (7, 4),
-(9, 5);
+(9, 5),
+(11, 14),
+(13, 16),
+(15, 22),
+(18, 21);
 
 -- --------------------------------------------------------
 
@@ -178,7 +254,12 @@ INSERT INTO `generatesrepairorder` (`repairID`, `type`, `startDate`, `endDate`, 
 (55239, 'window replacement', '2010-08-15', '2010-08-20', 3, 101, '2010-07-31 00:00:00'),
 (55240, 'extermination', '2002-12-30', '2002-12-31', 1, 105, '2002-12-21 00:00:00'),
 (55241, 'renovation', NULL, NULL, 5, 102, '2020-01-04 00:00:00'),
-(55242, 'extermination', '2008-02-25', '2008-02-26', 2, 104, '2008-02-23 00:00:00');
+(55242, 'extermination', '2008-02-25', '2008-02-26', 2, 104, '2008-02-23 00:00:00'),
+(55243, 'mold cleanup', '2020-03-30', '0000-00-00', 4, 402, '2020-03-11 00:00:00'),
+(55244, 'mold cleanup', '2020-04-15', '0000-00-00', 4, 305, '2020-03-21 00:00:00'),
+(55245, 'window replacement', '2015-08-09', '0000-00-00', 1, 305, '2015-07-31 00:00:00'),
+(55246, 'extermination', '2003-01-15', '0000-00-00', 1, 305, '2002-12-21 00:00:00'),
+(55247, 'plumbing', '2012-02-05', '2012-02-06', 1, 305, '2012-02-02 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -202,7 +283,14 @@ INSERT INTO `hasinspection` (`suiteNumber`, `dateOfInspection`, `reason`, `descr
 (102, '2020-01-04 00:00:00', 'renovation', 'kitchen appliances outdated/old'),
 (103, '2017-03-11 00:00:00', 'routine inspection', 'mold on bathroom ceiling'),
 (105, '2002-12-21 00:00:00', 'complaint', 'insect infestation'),
-(105, '2014-06-27 00:00:00', 'routine inspection', 'no issues');
+(105, '2014-06-27 00:00:00', 'routine inspection', 'no issues'),
+(204, '2020-06-27 09:30:00', 'routine inspection', 'no issues'),
+(305, '2002-12-21 15:45:00', 'complaint', 'insect infestation'),
+(305, '2012-02-02 16:30:00', 'complaint', 'sink blocked'),
+(305, '2015-07-31 13:15:00', 'tenant request', 'broken window'),
+(305, '2020-03-21 11:45:00', 'routine inspection', 'mold on bathroom ceiling'),
+(402, '2020-03-11 10:30:00', 'routine inspection', 'mold on bathroom ceiling'),
+(403, '2020-04-11 10:30:00', 'routine inspection', 'mold on bathroom ceiling');
 
 -- --------------------------------------------------------
 
@@ -226,7 +314,10 @@ INSERT INTO `hasparkingstall` (`stallNumber`, `rentAmount`, `isAccessible`, `ten
 (2, 125, 0, NULL),
 (3, 125, 1, 2),
 (4, 150, 0, 1),
-(5, 100, 1, NULL);
+(5, 100, 1, NULL),
+(6, 125, 1, 11),
+(7, 125, 1, NULL),
+(8, 100, 0, 19);
 
 -- --------------------------------------------------------
 
@@ -250,7 +341,14 @@ INSERT INTO `livesin` (`tenantID`, `suiteNumber`, `moveInDate`, `moveOutDate`) V
 (2, 103, '2015-01-25', NULL),
 (3, 105, '1992-02-17', NULL),
 (4, 101, '2008-06-01', NULL),
-(7, 101, '2008-06-01', NULL);
+(7, 101, '2008-06-01', NULL),
+(11, 304, '1997-01-31', NULL),
+(12, 202, '1999-03-31', NULL),
+(13, 405, '1992-04-30', NULL),
+(15, 201, '2020-03-31', NULL),
+(17, 402, '2015-02-01', NULL),
+(19, 204, '2000-06-30', NULL),
+(21, 305, '2000-04-30', NULL);
 
 -- --------------------------------------------------------
 
@@ -305,7 +403,19 @@ INSERT INTO `occupant` (`ID`, `name`, `phone`, `email`, `birthdate`, `numberOfBi
 (7, 'Mia Macleod', '6042654815', 'miamac28@hotmail.com', '1990-12-28', 0, 7),
 (8, 'Inez Oneil', '7781564125', 'inezone98@gmail.com', '1980-02-23', 1, 8),
 (9, 'Anna Young', '2365545648', 'annay11@gmail.com', '1992-11-11', 1, 9),
-(10, 'Lana Mccabe', '7782314258', 'lanamcc@hotmail.com', '1987-05-25', 2, 10);
+(10, 'Lana Mccabe', '7782314258', 'lanamcc@hotmail.com', '1987-05-25', 2, 10),
+(11, 'Francisco Woods', '6045098833', 'franswoods@gmail.com', '1972-03-25', 1, 11),
+(12, 'Brogan Wiley', '7789651236', 'broganwiley@gmail.com', '1973-08-15', 2, 12),
+(13, 'Aleena Graves', '2361523695', 'aleenagrave94@gmail.com', '1994-09-25', 0, 13),
+(14, 'Saniyah Harrel', '2361852153', 'sanyharrel71@gmail.com', '1971-06-12', 3, 14),
+(15, 'Lillian Marquez', '7787235698', 'lillianmq93@gmail.com', '1993-08-11', 2, 15),
+(16, 'Roy Christian', '2361523123', 'roychris92@gmail.com', '1992-01-24', 1, 16),
+(17, 'Eva Romero', '7781524125', 'evaromero@gmail.com', '1991-06-19', 1, 17),
+(18, 'Meadow Harrison', '7782541525', 'meadowharrison@gmail.com', '1987-05-22', 1, 18),
+(19, 'Abram Reeves', '2361524788', 'abramree85@gmail.com', '1985-04-09', 1, 19),
+(20, 'Tara Simon', '2368521169', 'tarasimons@gmail.com', '1988-11-24', 1, 20),
+(21, 'Carmelo Barnes', '2361254559', 'carmelob32@gmail.com', '1995-10-25', 0, 21),
+(22, 'Malachi Marquez', '7787325698', 'malachimq22@gmail.com', '2003-08-24', 1, 22);
 
 -- --------------------------------------------------------
 
@@ -328,6 +438,8 @@ INSERT INTO `quote` (`type`, `priority`, `quoteAmount`) VALUES
 ('extermination', 2, 450),
 ('extermination', 3, 400),
 ('mold cleanup', 4, 150),
+('plumbing', 1, 250),
+('window replacement', 1, 350),
 ('window replacement', 3, 200);
 
 -- --------------------------------------------------------
@@ -337,7 +449,6 @@ INSERT INTO `quote` (`type`, `priority`, `quoteAmount`) VALUES
 --
 
 CREATE TABLE `suite` (
-  `picture` varchar(100) NOT NULL,
   `suiteNumber` int(11) NOT NULL COMMENT 'Suite number',
   `bedrooms` int(11) NOT NULL COMMENT 'Number of bedrooms',
   `bathrooms` int(11) NOT NULL COMMENT 'Number of bathrooms',
@@ -349,12 +460,27 @@ CREATE TABLE `suite` (
 -- Dumping data for table `suite`
 --
 
-INSERT INTO `suite` (`picture`, `suiteNumber`, `bedrooms`, `bathrooms`, `rentAmount`, `hasMasterKey`) VALUES
-('', 101, 2, 2, 2200, 1),
-('', 102, 1, 1, 1250, 1),
-('', 103, 2, 1, 1775, 1),
-('', 104, 1, 1, 1300, 1),
-('', 105, 2, 2, 2500, 0);
+INSERT INTO `suite` (`suiteNumber`, `bedrooms`, `bathrooms`, `rentAmount`, `hasMasterKey`) VALUES
+(101, 2, 2, 2200, 1),
+(102, 1, 1, 1250, 1),
+(103, 2, 1, 1775, 1),
+(104, 1, 1, 1300, 1),
+(105, 2, 2, 2500, 0),
+(201, 2, 2, 2500, 1),
+(202, 1, 1, 1850, 0),
+(203, 2, 1, 2200, 1),
+(204, 1, 1, 1500, 0),
+(205, 2, 2, 2750, 1),
+(301, 2, 2, 2700, 1),
+(302, 1, 1, 2000, 0),
+(303, 2, 1, 2500, 1),
+(304, 1, 1, 1850, 0),
+(305, 2, 2, 3000, 1),
+(401, 2, 2, 3000, 1),
+(402, 1, 1, 2250, 0),
+(403, 2, 1, 2750, 1),
+(404, 1, 1, 2100, 0),
+(405, 2, 2, 3250, 1);
 
 -- --------------------------------------------------------
 
@@ -404,7 +530,14 @@ INSERT INTO `tenant` (`ID`, `numberOfPets`, `leaseStart`, `leaseEnd`) VALUES
 (7, 1, '2008-06-01', '2028-06-01'),
 (8, 0, '2005-06-01', '2028-06-01'),
 (9, 0, '2010-04-29', '2030-04-29'),
-(10, 1, '2000-12-31', '2025-12-31');
+(10, 1, '2000-12-31', '2025-12-31'),
+(11, 1, '1997-01-31', '2022-01-31'),
+(12, 1, '1999-03-31', '2024-03-31'),
+(13, 2, '1992-04-30', '2022-04-30'),
+(15, 1, '2020-03-31', '2045-03-31'),
+(17, 1, '2015-02-01', '2040-02-01'),
+(19, 1, '2000-06-30', '2030-06-30'),
+(21, 0, '2000-04-30', '2030-04-30');
 
 --
 -- Indexes for dumped tables
@@ -506,7 +639,7 @@ ALTER TABLE `tenant`
 -- AUTO_INCREMENT for table `occupant`
 --
 ALTER TABLE `occupant`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Constraints for dumped tables
