@@ -25,7 +25,7 @@ suite stats:
 *-average rent price of suite (can also do this per num bed type-0/1/2/overall)
 -average number of inspections per suite (of all time + of current tenancies)?
 -number of inspections per reason
--suites that haven't been inspected in 6 months or more
+*-suites that haven't been inspected in 6 months or more
 -top 10 suites with the most repairs or cost (maybe work in the division query here)
 -how many inspections in the last 6 months/year/2 years?
 -what percentage of inspections leads to a repair order?
@@ -34,7 +34,7 @@ suite stats:
 
 repair/cost stats:
 -pie chart of work types?
--number of repair orders per work type
+*-number of repair orders per work type
 *-average length of repair (can derive from startdate and enddate)
 -number of repair orders per priority (historically + currently)
 *-average quote amount [per order;] per work type order

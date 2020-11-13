@@ -1,8 +1,8 @@
 --notes from nov 3 meeting--
 
 projection query:
-	select (suite#, beds, baths, size, rent) all suites
-	select (certain columns from) all occupants
+	^_^ select (suite#, beds, baths, size, rent) all suites
+	^_^ select (certain columns from) all occupants
 selection query:
 	select all current tenants (where = lease end date > current date)
 	repair orders with incomplete status
@@ -21,7 +21,7 @@ aggregation query:
 	number of repair orders per work type
 nested aggregation with group-by:
 	average quote amount for repair orders
-	average cost or number of repair orders per suite
+	^_^ average cost or number of repair orders per suite
 delete operation: 
 	if a suite is deleted, all inspections should be deleted (cascade-on-delete)
 	remove tenant

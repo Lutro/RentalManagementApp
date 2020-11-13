@@ -1,0 +1,49 @@
+{% extends "dashboard.twig" %}
+
+{% block dashboard_content %}
+
+{% for stall in stalls %}
+
+    <div class="card user-card-full">
+        <div class="row m-l-0 m-r-0">
+            <div class="col-sm-4 bg-c-lite-green user-profile">
+                <div class="card-block text-center text-white">
+                    <h6 class="f-w-600 lead"> {{ stall.stallNumber }}</h6>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                            <div class="card-block">
+                                <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Rent Amount</p>
+                                        <h6 class="text-muted f-w-400">{{ stall.rentAmount }}</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">is Accessible</p>
+                                        <h6 class="text-muted f-w-400">{{ stall.isAccessible }}</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Name</p>
+                                        <h6 class="text-muted f-w-400">{{ stall.name }}</h6>
+                                    </div>
+                                      <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Phone</p>
+                                        <h6 class="text-muted f-w-400">{{ stall.phone }}</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Email</p>
+                                        <h6 class="text-muted f-w-400">{{ stall.email }}</h6>
+                                    </div>
+                                      <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Suite Number</p>
+                                        <h6 class="text-muted f-w-400">{{ stall.suiteNumber }}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        </div>
+    </div>
+
+{% endfor %}
+{% endblock dashboard_content %}
