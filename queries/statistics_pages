@@ -1,28 +1,28 @@
 --ideas for stats pages--
 
 tenant/occupant stats:
--total building occupants
+*-total building occupants
 -average number of occupants per suite
 -average number of pets per tenant
--average length of tenancy for current residents
+*-average length of tenancy for current residents
 -average length of tenancy historically
 -total number of bikes in the building
--age distribution of residents (0-10,11-19,20-39,40-65,65+)
--number of storage lockers in use
+*-age distribution of residents (0-10,11-19,20-39,40-65,65+)
+*-number of storage lockers in use (total 20 in existence)
 
 parking lot stats:
--total number of regular parking stalls in use/number available
--total number of accessible parking stalls in use/number available
--average rent price of parking stalls
--average number of parking stalls per tenant? (considering current tenants only)
+*-total number of regular parking stalls in use/number available
+[ying]*-total number of accessible parking stalls in use/number available
+*-average rent price of parking stalls
+*-average number of parking stalls per tenant? (considering current tenants only)
 
 suite stats:
 -total number of suites in the building
--total suites occupied/total available
--how much money was spent on a suite per year (in repair costs)
--number of suites per bedrooms/bathrooms
+*-total suites occupied/total available (20)
+*-how much money was spent on a suite per year (in repair costs)
+*-number of suites per bedrooms
 -average size of suite (can also do this per num beds type)
--average rent price of suite (can also do this per num bed type)
+*-average rent price of suite (can also do this per num bed type-0/1/2/overall)
 -average number of inspections per suite (of all time + of current tenancies)?
 -number of inspections per reason
 -suites that haven't been inspected in 6 months or more
@@ -30,23 +30,24 @@ suite stats:
 -how many inspections in the last 6 months/year/2 years?
 -what percentage of inspections leads to a repair order?
 -total repair orders per suite over time
--occupancy rate over time (graph)
+*-occupancy rate over time (graph) 
 
 repair/cost stats:
 -pie chart of work types?
 -number of repair orders per work type
--average length of repair (can derive from startdate and enddate)
+*-average length of repair (can derive from startdate and enddate)
 -number of repair orders per priority (historically + currently)
--average quote amount per order; per work type order
--total spent over time on all repair orders; + per work type
+*-average quote amount [per order;] per work type order
+*-total spent over time on all repair orders; + per work type/per year
 -current repair orders in progress/unassigned
 -number of repair orders or money spent over time (graph)
 
 contractor stats:
 -number of contractors per work type
--number of completed/in progress repair orders per contractor?
+*-number of completed/in progress repair orders per contractor?
 -average number of repair orders per contractor
--average length of time for each contractor to complete a repair order
+*-average length of time for each contractor to complete a repair order
+*-average quote amount per work order for each contractor
 
 possible visualisations:
 -pie charts
