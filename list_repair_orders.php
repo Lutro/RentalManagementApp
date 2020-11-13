@@ -14,8 +14,17 @@ terminate_on_query_error($success); //program will terminate on error
 
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
+for($x=0; $x < count($resultArray); $x += 1){
+    $resultArray[$x] += ["Assign Contractor"=>"<a href='list_contractors.php?rid=".$resultArray[$x]["ID"]."'>Assign</a>"];
+}
 
-$keys = ["repairID","suiteNumber", "priority", "type", "startDate", "endDate", "inspectionDate"];
+        // <label for="province">Province</label>
+        // <select class="" name="province">
+        //     {% for prov in provinces %}
+        //     <option value="{{prov}}" {% if prov == province %} selected {% endif %} > {{prov}} </option> 
+        //    {% endfor %}
+        // </select>
+$keys = ["repairID","suiteNumber", "priority", "type", "startDate", "endDate", "inspectionDate","Assign Contractor"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
