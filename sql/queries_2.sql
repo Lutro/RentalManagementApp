@@ -34,19 +34,8 @@ DELETE FROM tenant WHERE ID = tid$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getAverageQuoteAmount`()
-    NO SQL
-    COMMENT 'average quote amount for repair orders'
-SELECT AVG(quote.quoteAmount) as AverageQuote
-FROM generatesrepairorder
-INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority$$
-DELIMITER ;
-
-DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `removeSuite`(IN `sid` INT)
     NO SQL
     COMMENT 'remove suite'
 DELETE FROM suite WHERE suiteNumber = sid$$
 DELIMITER ;
-
-

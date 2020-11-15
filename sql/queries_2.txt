@@ -1,5 +1,2 @@
 getAverageQuotePerSuite: average cost of repair orders per suite
 keys=["suiteNumber", "averageQuote"]
-
-getAverageQuoteAmount: average quote amount for repair orders
-keys=["AverageQuote"]
