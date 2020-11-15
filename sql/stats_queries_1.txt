@@ -1,0 +1,41 @@
+getLockersInUse: number of storage lockers in use and total
+keys=["inUse", "total"]
+
+getAvgRepairLength: average length of repair (days)
+keys=["avgDays"]
+
+getAvgParkingRent: average rent of a parking stall (in dollars)
+keys=["avgRent"]
+
+getAvgSuiteRent: average rent price of suite- 1bed/2beds/overall
+keys=["bedrooms", "avgRent"]
+
+getAvgQuoteAmount: average quote amount for repair orders (overall + per type)
+keys=["type", "AverageQuote"]
+
+getAvgTenancy: computed from leaseStart to current date
+keys=["years", "days"]
+
+getParkingAvailability: get total number of parking stalls free/taken
+keys=["total", "inUse", "available"]
+
+getResidentAges: ages of current residents of the building
+keys=["ID", "age"]
+
+getSuiteAvailability: number of suites occupied and available
+keys=["total", "occupied", "available"]
+
+getSuiteAvgSpent: how much money was spent on a suite (in repair costs)
+keys=["suiteNumber", "avgSpent"]
+
+getSuitesByBeds: how many suites grouped by number of bedrooms
+keys=["bedrooms", "suites"]
+
+getTotalCurrentOccupants: number of occupants currently living in building
+keys=["currentOccupants"]
+
+getTotalQuoteAmount: total quote amount for repair orders (overall + per type)
+keys=["type", "total"]
+
+getContractorWorkStats: contractor repair order stats
+keys=["name", "phoneNumber", "workType", "completed", "inProgress", "avgDays", "avgQuote"]
