@@ -1,0 +1,2 @@
+-display message when assigning a repair order to a contractor (e.g. [name] is now currently assigned n repair orders)
+-display updated monthly rent amount when assigning a parking stall to a tenant (calculate from rent amount + stall amount)
