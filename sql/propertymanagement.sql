@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 12, 2020 at 11:50 PM
+-- Generation Time: Nov 18, 2020 at 12:47 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
@@ -25,6 +25,27 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `assignParkingStall` (IN `tid` INT, IN `snum` INT)  NO SQL
+    COMMENT 'assign parking stall to tenant'
+UPDATE hasparkingstall
+SET tenantID = tid
+WHERE stallNumber = snum$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `assignRepairOrder` (IN `rid` INT, IN `cn` VARCHAR(100), IN `cp` VARCHAR(50))  NO SQL
+    COMMENT 'assign contractor to repair order'
+UPDATE assignedto
+SET contractorName = cn,
+	contractorPhone = cp,
+    assignedOn = CURRENT_DATE()
+WHERE repairID = rid$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAverageQuotePerSuite` ()  NO SQL
+    COMMENT 'average cost of repair orders per suite'
+SELECT suiteNumber, AVG(quote.quoteAmount) as averageQuote
+FROM generatesrepairorder
+INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
+GROUP BY suiteNumber$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractors` ()  NO SQL
 SELECT *
 FROM contractor$$
@@ -124,6 +145,45 @@ SELECT occupant.name, occupant.phone, occupant.email, occupant.numberOfBikes, oc
 FROM occupant
 INNER JOIN tenant ON occupant.ID = tenant.ID$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUnassignedRepairOrders` ()  NO SQL
+    COMMENT 'repair orders that need to be assigned'
+SELECT generatesrepairorder.repairID, suiteNumber, priority, type, inspectionDate
+FROM `generatesrepairorder`
+INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
+WHERE contractorName IS NULL AND contractorPhone IS NULL$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `removeContractor` (IN `n` VARCHAR(100), IN `phone` VARCHAR(50))  NO SQL
+    COMMENT 'remove contractor'
+DELETE FROM contractor WHERE name = n AND phoneNumber = phone$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `removeSuite` (IN `sid` INT)  NO SQL
+    COMMENT 'remove suite'
+DELETE FROM suite WHERE suiteNumber = sid$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `removeTenant` (IN `tid` INT)  NO SQL
+    COMMENT 'remove tenant'
+DELETE FROM tenant WHERE ID = tid$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateOccupantInfo` (IN `oid` INT, IN `n` VARCHAR(50), IN `p` VARCHAR(20), IN `e` VARCHAR(50), IN `bd` DATE, IN `nob` INT, IN `sln` INT)  NO SQL
+    COMMENT 'update occupant information'
+UPDATE occupant
+SET name = n,
+	phone = p,
+    email = e,
+    birthdate = bd,
+    numberOfBikes = nob,
+    storageLockerNumber = sln
+WHERE ID = oid$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSuiteInfo` (IN `sn` INT, IN `beds` INT, IN `baths` INT, IN `rent` FLOAT, IN `mkey` BOOLEAN)  NO SQL
+    COMMENT 'update suite information'
+UPDATE suite
+SET bedrooms = beds,
+	bathrooms = baths,
+    rentAmount = rent,
+    hasMasterKey = mkey
+WHERE suiteNumber = sn$$
+
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -153,7 +213,9 @@ INSERT INTO `assignedto` (`repairID`, `contractorName`, `contractorPhone`, `assi
 (55243, 'Tim Bruce', '6043308521', '2020-03-05', 'complete'),
 (55244, 'Tim Bruce', '6043308521', '2020-03-25', 'complete'),
 (55245, 'Nicolas Reese', '6043554383', '2015-08-03', 'complete'),
-(55246, 'Caleb Mcneill', '6046496425', '2003-01-09', 'complete');
+(55246, 'Caleb Mcneill', '6046496425', '2003-01-09', 'complete'),
+(55247, 'James Kenedy', '6041525588', '2012-02-03', 'complete'),
+(55248, 'Johnny Dean', '6046177097', '2016-03-19', 'complete');
 
 -- --------------------------------------------------------
 
@@ -201,11 +263,11 @@ CREATE TABLE `contractor` (
 --
 
 INSERT INTO `contractor` (`name`, `phoneNumber`, `company`, `address`, `email`, `workType`) VALUES
-('Nicolas Reese', '6043554383', 'Window Repair', '156 Broadway Street, Vancouver BC, P7T 3V8', 'nicReese@windowrepair.com', 'window replacement'),
-('Johnny Dean', '6046177097', 'Home Construct & Renovations', '4155 Maywood Avenue, Vancouver BC, V5T 3K4', 'johndean@homerenov.com', 'renovation'),
-('Tim Bruce', '6043308521', 'PuroShine Restoration', '54 Avenue, Surrey BC, V5P 7L9', 'tbruce@puroshine.com', 'mold cleanup'),
+('Caleb Mcneill', '6046496425', 'Burnaby Pest Control', '701 Gilley Street, Burnaby BC, V5Z 9K1', 'calebm@bpestcontrol.com', 'extermination'),
 ('James Kenedy', '6041525588', 'The Plumbing Kings', '626 Victoria Drive, Vancouver BC, V5T 3K4', 'jamesk@plumbingkings.com', 'plumbing'),
-('Caleb Mcneill', '6046496425', 'Burnaby Pest Control', '701 Gilley Street, Burnaby BC, V5Z 9K1', 'calebm@bpestcontrol.com', 'extermination');
+('Johnny Dean', '6046177097', 'Home Construct & Renovations', '4155 Maywood Avenue, Vancouver BC, V5T 3K4', 'johndean@homerenov.com', 'renovation'),
+('Nicolas Reese', '6043554383', 'Window Repair', '156 Broadway Street, Vancouver BC, P7T 3V8', 'nicReese@windowrepair.com', 'window replacement'),
+('Tim Bruce', '6043308521', 'PuroShine Restoration', '54 Avenue, Surrey BC, V5P 7L9', 'tbruce@puroshine.com', 'mold cleanup');
 
 -- --------------------------------------------------------
 
@@ -259,7 +321,8 @@ INSERT INTO `generatesrepairorder` (`repairID`, `type`, `startDate`, `endDate`, 
 (55244, 'mold cleanup', '2020-04-15', '0000-00-00', 4, 305, '2020-03-21 00:00:00'),
 (55245, 'window replacement', '2015-08-09', '0000-00-00', 1, 305, '2015-07-31 00:00:00'),
 (55246, 'extermination', '2003-01-15', '0000-00-00', 1, 305, '2002-12-21 00:00:00'),
-(55247, 'plumbing', '2012-02-05', '2012-02-06', 1, 305, '2012-02-02 00:00:00');
+(55247, 'plumbing', '2012-02-05', '2012-02-06', 1, 305, '2012-02-02 00:00:00'),
+(55248, 'renovation', '2016-06-10', '2016-06-29', 4, 305, '2016-02-25 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -288,6 +351,7 @@ INSERT INTO `hasinspection` (`suiteNumber`, `dateOfInspection`, `reason`, `descr
 (305, '2002-12-21 15:45:00', 'complaint', 'insect infestation'),
 (305, '2012-02-02 16:30:00', 'complaint', 'sink blocked'),
 (305, '2015-07-31 13:15:00', 'tenant request', 'broken window'),
+(305, '2016-02-05 11:30:00', 'renovation', 'floor tiles old'),
 (305, '2020-03-21 11:45:00', 'routine inspection', 'mold on bathroom ceiling'),
 (402, '2020-03-11 10:30:00', 'routine inspection', 'mold on bathroom ceiling'),
 (403, '2020-04-11 10:30:00', 'routine inspection', 'mold on bathroom ceiling');
@@ -559,6 +623,7 @@ ALTER TABLE `cohabitateswith`
 -- Indexes for table `contractor`
 --
 ALTER TABLE `contractor`
+  ADD PRIMARY KEY (`name`,`phoneNumber`),
   ADD UNIQUE KEY `address` (`address`,`email`);
 
 --
@@ -639,7 +704,7 @@ ALTER TABLE `tenant`
 -- AUTO_INCREMENT for table `occupant`
 --
 ALTER TABLE `occupant`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- Constraints for dumped tables
@@ -650,6 +715,12 @@ ALTER TABLE `occupant`
 --
 ALTER TABLE `assignedto`
   ADD CONSTRAINT `assignedto_ibfk_1` FOREIGN KEY (`repairID`) REFERENCES `generatesrepairorder` (`repairID`);
+
+--
+-- Constraints for table `hasinspection`
+--
+ALTER TABLE `hasinspection`
+  ADD CONSTRAINT `hasinspection_ibfk_1` FOREIGN KEY (`suiteNumber`) REFERENCES `suite` (`suiteNumber`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `hasparkingstall`
