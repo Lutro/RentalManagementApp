@@ -2,7 +2,7 @@ DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getLockersInUse`()
     NO SQL
     COMMENT 'number of storage lockers in use and total'
-SELECT COUNT(*) as inUse, 25 as total
+SELECT COUNT(*) as inUse, (25 - COUNT(*)) as available, 25 as total
 FROM occupant
 WHERE storageLockerNumber IS NOT NULL$$
 DELIMITER ;

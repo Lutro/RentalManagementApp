@@ -25,6 +25,7 @@ function navList(){
             [ "link" => 'list_tenants.php', "text"=> 'Tenants'],
             [ "link" => 'list_repair_orders.php', "text"=>'Repair Orders'],
             [ "link" => 'list_contractors.php', "text"=>'Contractors'],
+            [ "link" => 'availability.php', "text"=>'Availability'],
             [ "link" => 'mgmt_stats.php', "text"=>'Management Statistics']];
 }
 
