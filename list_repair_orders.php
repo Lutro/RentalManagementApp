@@ -7,7 +7,7 @@ $dbh = get_database_object();
 /* check connection */
 terminate_on_connect_error();
 
-$tenantQuery = $dbh->prepare('call getRepairOrders()');
+$tenantQuery = $dbh->prepare('call getUnassignedRepairOrders()');
 $success = $tenantQuery->execute();
 
 terminate_on_query_error($success); //program will terminate on error
@@ -15,7 +15,7 @@ terminate_on_query_error($success); //program will terminate on error
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["Assign Contractor"=>"<a href='list_contractors.php?rid=".$resultArray[$x]["ID"]."'>Assign</a>"];
+    $resultArray[$x] += ["Assign Contractor"=>"<a href='list_contractors.php?rid=".$resultArray[$x]["repairID"]."'>Assign</a>"];
 }
 
         // <label for="province">Province</label>
@@ -24,13 +24,13 @@ for($x=0; $x < count($resultArray); $x += 1){
         //     <option value="{{prov}}" {% if prov == province %} selected {% endif %} > {{prov}} </option> 
         //    {% endfor %}
         // </select>
-$keys = ["repairID","suiteNumber", "priority", "type", "startDate", "endDate", "inspectionDate","Assign Contractor"];
+$keys = ["repairID","suiteNumber", "priority", "type", "inspectionDate","Assign Contractor"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
-                 "page_title"=>"Repair Orders", 
-                 "heading"=>"Repair Orders",
+                 "page_title"=>"Unassigned Repair Orders", 
+                 "heading"=>"Unassigned Repair Orders",
                  "table" => $resultArray,
                  "keys" => $keys ];
 
