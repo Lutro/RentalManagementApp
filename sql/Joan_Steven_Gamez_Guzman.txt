@@ -1,0 +1,18 @@
+A09 Calendar
+
+My Calendar:
+   Set background blue if     5/5
+   appointment 
+
+To do List:
+   Add button adds to list    2.5/2.5
+   click to remove            2.5/2.5
+   
+
+Total:     10/10
+Notes: 
+
+
+
+Many things can be achieved, as long as you believe in it." 
+- You Asakura (Shaman King)
