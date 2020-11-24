@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 18, 2020 at 12:47 AM
+-- Generation Time: Nov 25, 2020 at 12:16 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
@@ -46,9 +46,87 @@ FROM generatesrepairorder
 INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
 GROUP BY suiteNumber$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgParkingRent` ()  NO SQL
+    COMMENT 'average rent of a parking stall (in dollars)'
+SELECT AVG(rentAmount) as avgRent
+FROM hasparkingstall$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgQuoteAmount` ()  NO SQL
+    COMMENT 'average quote amount for repair orders (overall + per type)'
+SELECT generatesrepairorder.type, ROUND(AVG(quote.quoteAmount),2) as AverageQuote
+FROM generatesrepairorder
+INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
+GROUP BY type WITH ROLLUP$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgRepairLength` ()  NO SQL
+    COMMENT 'average length of repair (days)'
+SELECT ROUND(AVG(DATEDIFF(endDate,startDate)),1) as avgDays
+FROM generatesrepairorder$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgSuiteRent` ()  NO SQL
+    COMMENT 'average rent price of suite- 1bed/2beds/overall'
+SELECT bedrooms, AVG(rentAmount) as avgRent
+FROM suite
+GROUP BY bedrooms WITH ROLLUP$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgTenancy` ()  NO SQL
+    COMMENT 'computed from leaseStart to current date'
+SELECT ROUND(AVG(livingHere)/365,0) as years,  ROUND(AVG(livingHere)%365,0) as days
+FROM
+(
+-- get occupants that are tenants that have current lease
+SELECT occupant.ID, leaseStart, DATEDIFF(CURRENT_DATE(),leaseStart) as livingHere
+FROM occupant
+INNER JOIN tenant
+ON occupant.ID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE()
+
+-- add to occupants that are not tenants but are living with someone who does have a current lease
+UNION
+
+(SELECT nontenantID as ID, leaseStart, DATEDIFF(CURRENT_DATE(),leaseStart) as livingHere
+FROM
+(SELECT nontenantID, tenantB as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantA
+
+UNION
+
+SELECT nontenantID, tenantA as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantB) as pairs
+
+INNER JOIN tenant
+ON pairs.tenantID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE() 
+) 
+) 
+as final$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractors` ()  NO SQL
 SELECT *
 FROM contractor$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractorWorkStats` ()  NO SQL
+    COMMENT 'contractor repair order stats'
+SELECT contractor.name, contractor.phoneNumber, workType, SUM(case when status='complete' then 1 else 0 end) AS completed, SUM(case when status='in progress' then 1 else 0 end) AS inProgress, ROUND(AVG(DATEDIFF(endDate,startDate)),1) as avgDays, ROUND(AVG(quoteAmount),2) as avgQuote
+FROM generatesrepairorder
+INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
+INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
+RIGHT JOIN contractor ON contractor.name = assignedto.contractorName AND contractor.phoneNumber = assignedto.contractorPhone
+GROUP BY contractor.name, contractor.phoneNumber$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getIncompleteRepairOrders` ()  NO SQL
     COMMENT 'repair orders with incomplete status'
@@ -63,11 +141,24 @@ SELECT reason, COUNT(reason) as inspections
 FROM hasinspection
 GROUP BY reason$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLockersInUse` ()  NO SQL
+    COMMENT 'number of storage lockers in use and total'
+SELECT COUNT(*) as inUse, (25 - COUNT(*)) as available, 25 as total
+FROM occupant
+WHERE storageLockerNumber IS NOT NULL$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getManager` ()  NO SQL
 SELECT occupant.name, occupant.email, occupant.phone, manager.managerSince
 FROM occupant
 INNER JOIN manager ON occupant.ID = manager.ID
 WHERE manager.managerUntil IS NULL$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getParkingAvailability` ()  NO SQL
+    COMMENT 'get total number of parking stalls free/taken'
+SELECT COUNT(*) AS total,
+	SUM(case when tenantID IS NOT NULL then 1 else 0 end) AS inUse,
+    SUM(case when tenantID IS NULL then 1 else 0 end) AS available
+FROM hasparkingstall$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getParkingStalls` ()  NO SQL
     COMMENT 'get parking stalls with corresponding tenant info'
@@ -92,6 +183,90 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrderStats` ()  NO SQL
 SELECT type, COUNT(repairID) as repairOrders
 FROM generatesrepairorder
 GROUP BY type$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getResidentAges` ()  NO SQL
+    COMMENT 'ages of current residents of the building'
+SELECT ID, FLOOR(DATEDIFF(CURRENT_DATE,birthdate)/365) as age
+FROM
+
+-- get occupants that are tenants that have current lease
+(SELECT occupant.ID, birthdate
+FROM occupant
+INNER JOIN tenant
+ON occupant.ID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE()
+
+-- add to occupants that are not tenants but are living with someone who does have a current lease
+UNION
+
+(SELECT nontenantID as ID, birthdate
+FROM
+(SELECT nontenantID, tenantB as tenantID, birthdate
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID, birthdate
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantA
+
+UNION
+
+SELECT nontenantID, tenantA as tenantID, birthdate
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID, birthdate
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantB) as pairs
+
+INNER JOIN tenant
+ON pairs.tenantID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE() 
+) 
+) as f$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteAvailability` ()  NO SQL
+    COMMENT 'number of suites occupied and available'
+SELECT 
+	 COUNT(*) as total,
+	 SUM(case when num IS NOT NULL then 1 else 0 end) AS occupied,
+     SUM(case when num IS NULL then 1 else 0 end) AS available
+FROM (
+
+    SELECT suite.suiteNumber, COUNT(suite.suiteNumber) as num
+	FROM suite
+	LEFT JOIN livesin ON suite.suiteNumber = livesin.suiteNumber 
+    WHERE tenantID IS NOT NULL
+    GROUP BY suite.suiteNumber
+    
+    UNION
+    
+    SELECT suite.suiteNumber, tenantID as num
+    FROM suite
+    LEFT JOIN livesin ON suite.suiteNumber = livesin.suiteNumber
+    WHERE tenantID IS NULL
+) as f$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteAvgSpent` ()  NO SQL
+    COMMENT 'how much money was spent on a suite (in repair costs)'
+SELECT suite.suiteNumber, COALESCE(avgSpent,0) as avgSpent
+FROM
+(SELECT suiteNumber, AVG(quoteAmount) as avgSpent
+FROM generatesrepairorder
+INNER JOIN quote
+ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
+GROUP BY suiteNumber) as x 
+RIGHT JOIN suite ON x.suiteNumber = suite.suiteNumber
+ORDER BY suiteNumber ASC$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteBedroomNumbers` ()  NO SQL
+    COMMENT 'get possible values of bedrooms column'
+SELECT DISTINCT bedrooms
+FROM suite$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteOccupancy` ()  NO SQL
     COMMENT 'suite info (number of occupants, pets, etc)'
@@ -127,6 +302,17 @@ EXCEPT
  WHERE suite.suiteNumber = sx.suiteNumber ) 
 )$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesBedroomParam` (IN `beds` INT)  NO SQL
+SELECT *
+FROM suite
+WHERE bedrooms = beds$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesByBeds` ()  NO SQL
+    COMMENT 'how many suites grouped by number of bedrooms'
+SELECT bedrooms, COUNT(bedrooms) as suites
+FROM suite
+GROUP BY bedrooms$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesRent` ()  NO SQL
 SELECT suite.suiteNumber, occupant.name, suite.rentAmount
 FROM suite
@@ -145,12 +331,68 @@ SELECT occupant.name, occupant.phone, occupant.email, occupant.numberOfBikes, oc
 FROM occupant
 INNER JOIN tenant ON occupant.ID = tenant.ID$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTotalCurrentOccupants` ()  NO SQL
+    COMMENT 'number of occupants currently living in building'
+SELECT COUNT(*) as currentOccupants
+FROM
+(
+-- get occupants that are tenants that have current lease
+SELECT occupant.ID, leaseEnd
+FROM occupant
+INNER JOIN tenant
+ON occupant.ID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE()
+
+-- add to occupants that are not tenants but are living with someone who does have a current lease
+UNION
+
+(SELECT nontenantID as ID, leaseEnd
+FROM
+(SELECT nontenantID, tenantB as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantA
+
+UNION
+
+SELECT nontenantID, tenantA as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantB) as pairs
+
+INNER JOIN tenant
+ON pairs.tenantID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE() 
+) 
+) as final$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTotalQuoteAmount` ()  NO SQL
+    COMMENT 'total quote amount for repair orders (overall + per type)'
+SELECT generatesrepairorder.type, ROUND(SUM(quote.quoteAmount),2) as total
+FROM generatesrepairorder
+INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
+GROUP BY type WITH ROLLUP$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getUnassignedRepairOrders` ()  NO SQL
     COMMENT 'repair orders that need to be assigned'
 SELECT generatesrepairorder.repairID, suiteNumber, priority, type, inspectionDate
 FROM `generatesrepairorder`
 INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
 WHERE contractorName IS NULL AND contractorPhone IS NULL$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertOccupant` (IN `name` VARCHAR(50), IN `phone` VARCHAR(20), IN `email` VARCHAR(50), IN `birthdate` DATE, IN `numberOfBikes` INT, IN `storageLockerNumber` INT)  NO SQL
+INSERT INTO occupant(name, phone, email, birthdate, numberOfBikes, storagelockerNumber)
+VALUES(name, phone, email, birthdate, numberOfBikes, storagelockerNumber)$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `removeContractor` (IN `n` VARCHAR(100), IN `phone` VARCHAR(50))  NO SQL
     COMMENT 'remove contractor'
@@ -479,7 +721,8 @@ INSERT INTO `occupant` (`ID`, `name`, `phone`, `email`, `birthdate`, `numberOfBi
 (19, 'Abram Reeves', '2361524788', 'abramree85@gmail.com', '1985-04-09', 1, 19),
 (20, 'Tara Simon', '2368521169', 'tarasimons@gmail.com', '1988-11-24', 1, 20),
 (21, 'Carmelo Barnes', '2361254559', 'carmelob32@gmail.com', '1995-10-25', 0, 21),
-(22, 'Malachi Marquez', '7787325698', 'malachimq22@gmail.com', '2003-08-24', 1, 22);
+(22, 'Malachi Marquez', '7787325698', 'malachimq22@gmail.com', '2003-08-24', 1, 22),
+(101, 'Test Occupant 1', '6043792646', 'test@gmail.com', '2020-11-26', 1, 3);
 
 -- --------------------------------------------------------
 
@@ -704,7 +947,7 @@ ALTER TABLE `tenant`
 -- AUTO_INCREMENT for table `occupant`
 --
 ALTER TABLE `occupant`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- Constraints for dumped tables
