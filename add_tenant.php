@@ -107,6 +107,35 @@ if(!$valid){
 
    $success = $tableQuery->execute();
 
+   //If fields are not empty add as tenant
+
+   //Get tenant ID
+   $tableTenantIDQuery = $db->prepare("call getOccupantID(?, ? ,?)");
+   $tableTenantIDQuery->bind_param('sss', $name, $phone, $email);
+   $success = $tableTenantIDQuery->execute();
+   $result = $tableQuery->get_result();
+   $value = $result->fetch_object();
+   $tenantID = $Value->ID;
+
+   // add into tenant
+   $tableTenantQuery = $db->prepare("call insertTenant(?, ? ,?, ?)");
+   $numberOfPets = $data["numberOfPets"];
+   $leaseStart = $data["leaseStart"];
+   $leaseEnd = $data["leaseEnd"];
+
+   $tableTenantQuery->bind_param('ssssii', $tenantID, $numberOfPets, $leaseStart, $leaseEnd);
+    $success = $tableTenantQuery->execute();
+   
+   // add into lives in
+   $tableLivesInQuery = $db->prepare("call insertLivesIn(?, ? ,?, ?)");
+   $suiteNumber = $date["suiteNum"];
+   $moveInDate = $data["moveInDate"];
+   
+   $tableLivesInQuery->bind_param('iis', $tenantID, $suiteNumber, $moveInDate);
+   $success = $tableLivesInQuery->execute();
+
+
+
     $renderParams["message"] = "The new occupant " . $name . " has been added!";
     render_page('add-tenant.twig',$renderParams);
 }
