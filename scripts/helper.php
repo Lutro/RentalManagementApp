@@ -23,10 +23,11 @@ function valueIfExists($key,$array){
 function navList(){
     return [[ "link" => 'list_suites.php', "text"=>'Suites'],
             [ "link" => 'list_tenants.php', "text"=> 'Tenants'],
-            [ "link" => 'list_repair_orders.php', "text"=>'Repair Orders'],
             [ "link" => 'list_contractors.php', "text"=>'Contractors'],
-            [ "link" => 'availability.php', "text"=>'Availability'],
-            [ "link" => 'mgmt_stats.php', "text"=>'Management Statistics']];
+	    [ "link" => 'list_repair_orders.php', "text"=>'Maintenance'],
+	    [ "link" => 'add_tenant.php', "text"=>'Admin'],
+            //[ "link" => 'availability.php', "text"=>'Availability'],
+            [ "link" => 'mgmt_stats.php', "text"=>'Reports']];
 }
 
 // Defines the address element for a page
