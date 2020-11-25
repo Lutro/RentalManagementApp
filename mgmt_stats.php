@@ -1,7 +1,7 @@
 <?php
 require_once 'scripts/helper.php';
 
-render_page("dashboard.twig",["nav"=>navList(), 
+render_page("admin-dashboard.twig",["nav"=>navList(), 
 "address" =>address(), 
 "title"=>title(),
 "page_title"=>"Management", 
