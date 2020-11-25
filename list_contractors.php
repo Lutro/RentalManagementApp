@@ -32,7 +32,10 @@ terminate_on_query_error($success); //program will terminate on error
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
-$keys = ["name","phoneNumber","company","address","email", "workType"];
+for($x=0; $x < count($resultArray); $x += 1){
+    $resultArray[$x] += ["delete"=>"<a href='delete_contractor.php?name=".$resultArray[$x]["name"]."&phone=".$resultArray[$x]["phoneNumber"]."'>Delete</a>"];
+}
+$keys = ["name","phoneNumber","company","address","email", "workType", "delete"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 

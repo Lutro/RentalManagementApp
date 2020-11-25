@@ -6,9 +6,9 @@ $dbh = get_database_object();
 /* check connection */
 terminate_on_connect_error();
 
-$options = ["bedrooms", "bathrooms"];
-for ()
-$options_sql = "SELECT DISTINCT " $option "FROM suite"
+// $options = ["bedrooms", "bathrooms"];
+// for ()
+// $options_sql = "SELECT DISTINCT " $option "FROM suite"
 
 
 $filterQuery = $dbh->prepare('call getSuiteBedroomNumbers()');
@@ -77,7 +77,6 @@ $sql .= " LIMIT ?,?";
 $parameters[] = $offset;
 $parameters[] = $limit;
 
-echo $sql;
 // the usual prepare/bind/execute/fetch routine
 $stmt = $dbh->prepare($sql);
 $stmt->bind_param(str_repeat("s", count($parameters)), ...$parameters);

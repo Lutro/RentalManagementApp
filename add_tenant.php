@@ -1,7 +1,7 @@
 <?php
 require_once 'scripts/helper.php';
 
-// $renderParams = [FormTypeKey=>VisitForm,"nav"=>navList(), "address" =>address(), "title"=>title()];
+$renderParams = ["nav"=>navList(), "address" =>address(), "title"=>title()];
 
 $db = get_database_object();
 
