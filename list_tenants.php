@@ -1,6 +1,9 @@
 <?php
 require_once 'scripts/helper.php';
 
+function deleteTenant($tenantID) {
+    $tenantIDQuery->bind_param('i', $tenantID);
+}
 
 /*get the tenant information, to populate the tenant list from the database */
 $dbh = get_database_object();
@@ -13,11 +16,15 @@ $success = $tenantQuery->execute();
 terminate_on_query_error($success); //program will terminate on error
 
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
+$tenantQuery->close();
+// $tenantIDQuery = $dbh->prepare('call removeTenant(?)');
+// $tenantID = 1;
+// $tenantIDQuery->bind_param('i', $tenantID);
 
-// for($x=0; $x < count($resultArray); $x += 1){
-//     $resultArray[$x] += ["link"=>"<a href='visitByRestaurant.php?rid=".$resultArray[$x]["ID"]."'>Visits</a>"];
-// }
-$keys = ["name","phone","email","numberOfBikes","storageLockerNumber","numberOfPets", "leaseStart", "leaseEnd"];
+for($x=0; $x < count($resultArray); $x += 1){
+    $resultArray[$x] += ["delete"=>"<input type=\"submit\"id=".$resultArray[$x]["id"]."' class='button' value='delete'>"];
+}
+$keys = ["name","phone","email","numberOfBikes","storageLockerNumber","numberOfPets", "leaseStart", "leaseEnd","delete"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
