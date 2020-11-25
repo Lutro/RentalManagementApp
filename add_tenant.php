@@ -121,34 +121,29 @@ if(!$valid){
    $result = $tableTenantIDQuery->get_result();
    $value = $result->fetch_object();
    $tenantID = $value->ID;
-   echo gettype($tenantID)."<br>";
    $tableTenantIDQuery->close();
-
 
    // add into tenant
    $tableTenantQuery = $db->prepare("call insertTenant(?, ? ,?, ?)");
    $numberOfPets = (int)$data["numberOfPets"];
-   echo gettype($numberOfPets)."<br>";
    $leaseStart = $data["leaseStart"];
-   echo gettype($leaseStart)."<br>";
    $leaseEnd = $data["leaseEnd"];
-  
-   echo gettype($leaseEnd)."<br>";
 
    $tableTenantQuery->bind_param('iiss', $tenantID, $numberOfPets, $leaseStart, $leaseEnd);
-    $success = $tableTenantQuery->execute();
-    terminate_on_query_error($success); 
+   $success = $tableTenantQuery->execute();
+   terminate_on_query_error($success);
+   $tableTenantQuery->close();
    
-//    // add into lives in
-//    $tableLivesInQuery = $db->prepare("call insertLivesIn(?, ? ,?, ?)");
-//    $suiteNumber = $date["suiteNum"];
-//    $moveInDate = $data["moveInDate"];
+   // add into lives in
+   $tableLivesInQuery = $db->prepare("call insertLivesIn(?, ?, ?)");
+   $suiteNumber = $data["suiteNum"]; // does not work -- how to get the suite that was selected by the user from the drop down??
+   $moveInDate = $data["moveInDate"];
    
-//    $tableLivesInQuery->bind_param('iis', $tenantID, $suiteNumber, $moveInDate);
-//    $success = $tableLivesInQuery->execute();
+   $tableLivesInQuery->bind_param('iis', $tenantID, $suiteNumber, $moveInDate);
+   $success = $tableLivesInQuery->execute();
+   terminate_on_query_error($success);
+   $tableLivesInQuery->close();
 
-
-
-    $renderParams["message"] = "The new occupant " . $name . " has been added!";
-    render_page('add-tenant.twig',$renderParams);
+   $renderParams["message"] = "The new occupant " . $name . " has been added!\n\n";
+   render_page('add-tenant.twig',$renderParams);
 }
