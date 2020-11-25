@@ -72,4 +72,4 @@ $renderParams = ["nav"=>navList(),
                  "keys" => $keys ];
 
 
-render_page("generic-table.twig", $renderParams);
+render_page("repair-order-stats.twig", $renderParams);
