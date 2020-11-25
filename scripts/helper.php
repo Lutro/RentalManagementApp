@@ -25,9 +25,10 @@ function navList(){
             [ "link" => 'list_tenants.php', "text"=> 'Tenants'],
             [ "link" => 'list_contractors.php', "text"=>'Contractors'],
 	    [ "link" => 'list_repair_orders.php', "text"=>'Maintenance'],
-	    [ "link" => 'add_tenant.php', "text"=>'Admin'],
+	    [ "link" => 'mgmt_stats.php', "text"=>'Admin'],
             //[ "link" => 'availability.php', "text"=>'Availability'],
-            [ "link" => 'mgmt_stats.php', "text"=>'Reports']];
+            //[ "link" => 'mgmt_stats.php', "text"=>'Reports']];
+	    [ "link" => 'user_profile.php', "text"=>'Reports']];
 }
 
 // Defines the address element for a page

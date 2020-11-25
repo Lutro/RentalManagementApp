@@ -2,75 +2,63 @@
   <div class="p-4 pt-5">
     <i class="fas fa-tachometer-alt fa-5x"></i>
     <ul class="list-unstyled components mb-5">
-      <li class="active">
-        <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Dashboard</a>
-        <ul class="collapse list-unstyled" data-toggle="collapse" id="homeSubmenu">
-          <li>
-              <a href="tenant_stats.php">Tenant Stats</a>
-          </li>
-          <li>
-              <a href="suites_worked_on.php">Suite Stats</a>
-          </li>
-          <li>
-              <a href="repair_order_per_suite.php">Repair Stats</a>
-          </li>
-          <li>
-              <a href="#">Cost Stats</a>
-          </li>
-            <li>
-              <a href="inspection_stats.php">Inspection Stats</a>
-          </li>
-        </ul>
-      </li>
+ 
       <li>
           <a href="user_profile.php">Manager Profile</a>
       </li>
+
       <li>
-        <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Tenants</a>
-        <ul class="collapse list-unstyled" data-toggle="collapse" id="pageSubmenu">
+          <a href='#'>Activity Log</a>
+      </li>
+ 
+      <li>
+        <a href="#tenantSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Tenant Stats</a>
+        <ul class="collapse list-unstyled" data-toggle="collapse" id="tenantSubmenu">
           <li>
-              <a href="add_tenant.php">Add Tenant</a>
+              <a href="tenant_stats.php">Placeholder</a>
           </li>
           <li>
-              <a href="assign_parking.php">Assign Parking</a>
-          </li>
-          <li>
-              <a href="#">Edit Tenant Information</a>
+              <a href="#">Placeholder</a>
           </li>
         </ul>
       </li>
+
       <li>
-       <li>
-        <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Suites</a>
-        <ul class="collapse list-unstyled" id="pageSubmenu">
+        <a href="#contractorSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Contractor Stats</a>
+        <ul class="collapse list-unstyled" data-toggle="collapse" id="contractorSubmenu">
           <li>
-              <a href="suite_grid.php">View Suites</a>
-          </li>
-          <li>
-              <a href="#">Edit Suite Information</a>
+            <a href="#">Placeholder</a>
           </li>
         </ul>
       </li>
-       <li>
-        <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Repairs</a>
-        <ul class="collapse list-unstyled" id="pageSubmenu">
+ 
+      <li>
+        <a href="#repairSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Repair Stats</a>
+        <ul class="collapse list-unstyled" id="repairSubmenu">
           <li>
               <a href="incomplete_repairs.php">Incomplete Repairs</a>
           </li>
           <li>
               <a href="repair_orders_per_type.php">Repairs Per Work Type</a>
           </li>
+	  <li>
+	      <a href="repair_order_per_suite.php">Repairs Per Suite</a>
+	  </li>
           <li>
               <a href="list_repair_orders.php">Unassigned Repairs</a>
           </li>
         </ul>
       </li>
+
       <li>
-        <a href="rent_admin.php">Rent Administration</a>
+        <a href="#inspectionSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Inspection Stats</a>
+        <ul class="collapse list-unstyled" id="inspectionSubmenu">
+          <li>
+            <a href="current_inspections.php">Current Inspections</a>
+          </li>
+        </ul>
       </li>
-      <li>
-        <a href="current_inspections.php">Inspections</a>
-      </li>
+
     </ul>
 
   </div>

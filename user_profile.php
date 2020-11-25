@@ -21,7 +21,7 @@ $renderParams = ["nav"=>navList(),
                  "title"=>title(),
                  "page_title"=>"Manager Profile", 
                  "keys"=>$keys,
-                 "heading"=>"Manager",
+                 "heading"=>"Manager Profile",
                  "users"=>$resultArray];
 
 
