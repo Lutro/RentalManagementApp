@@ -9,23 +9,60 @@
         {# <div class="formtype" style="display: none;">
             <input type="text" name ="formtype" value="{{formtype}}">
        </div> #}
-        <label name="suiteNumber">Suite Number</label>
-        <select class="suite_class" name="suiteNumber">
-            {% for suite in suites %}
-            <option value="{{suite["suiteNumber"]}}" {% if suite["suiteNumber"] == suite %} selected {% endif %}>{{suite["suiteNumber"]}}</option>            
-            {% endfor %}
-        </select><br>
-        <label name="name">Name</label><input type="text" class="{{name_class}}" value="{{name}}" name="name" id="name"><br>
-        <label name="phone">Phone Number</label><input type="tel" class="{{phone_class}}" value="{{phone}}" name="phone" id="phone"><br>
-        <label for="email">E-mail</label><input type="email" class="{{email_class}}" name="email" id="email"><br>
-        <label name="birthdate">Birthdate</label><input type="date" class="{{birthdate_class}}" value="{{birthdate}}" name="birthdate" id="birthdate"><br>
-        <label name="numberOfBikes">Number of Bikes</label><input type="number" class="{{numberOfBikes_class}}" value="{{numberOfBikes}}" name="numberOfBikes" id="numberOfBikes"><br>
-        <label name="storageLockerNumber">storageLockerNumber</label><input type="number" class="{{storageLockerNumber_class}}" value="{{storageLockerNumber}}" name="storageLockerNumber" id="storageLockerNumber"><br>
-        <label name="numberOfPets">Number of Pets</label><input type="number" class="{{numberOfPets_class}}" value="{{numberOfPets}}" name="numberOfPets" id="numberOfPets"><br>
-        <label name="leaseStart">Lease Start</label><input type="date" class="{{leaseStart_class}}" value="{{leaseStart}}" name="leaseStart" id="leaseStart"><br>
-        <label name="leaseEnd">Lease End</label><input type="date" class="{{leaseEnd_class}}" value="{{leaseEnd}}" name="leaseEnd" id="leaseEnd"><br>
-        <label name="moveInDate">moveInDate</label><input type="date" class="{{moveInDate_class}}" value="{{moveInDate}}" name="moveInDate" id="moveInDate"><br>
+        <div class="form-row">
+            <div class="form-group">
+                <label name="suiteNumber">Suite Number</label>
+                <select class="suite_class" name="suiteNumber">
+                    {% for suite in suites %}
+                    <option value="{{suite["suiteNumber"]}}" {% if suite["suiteNumber"] == suite %} selected {% endif %}>{{suite["suiteNumber"]}}</option>            
+                    {% endfor %}
+                </select><br>
+            </div>
+            
+            <div class="form-group">
+                <label name="name">Name</label><input type="text" class="{{name_class}}" value="{{name}}" name="name" id="name"><br>
+            </div>
+        </div>
 
-        <input type="submit" value="Submit">
+        <div class="form-row">
+            <div class="form-group">
+                <label name="phone">Phone Number</label><input type="tel" class="{{phone_class}}" value="{{phone}}" name="phone" id="phone"><br>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label><input type="email" class="{{email_class}}" name="email" id="email"><br>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label name="birthdate">Birthdate</label><input type="date" class="{{birthdate_class}}" value="{{birthdate}}" name="birthdate" id="birthdate"><br>
+            </div>
+            <div class="form-group">
+                <label name="numberOfBikes">Number of Bikes</label><input type="number" class="{{numberOfBikes_class}}" value="{{numberOfBikes}}" name="numberOfBikes" id="numberOfBikes"><br>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label name="storageLockerNumber">storageLockerNumber</label><input type="number" class="{{storageLockerNumber_class}}" value="{{storageLockerNumber}}" name="storageLockerNumber" id="storageLockerNumber"><br>
+            </div>
+            <div class="form-group">
+                <label name="numberOfPets">Number of Pets</label><input type="number" class="{{numberOfPets_class}}" value="{{numberOfPets}}" name="numberOfPets" id="numberOfPets"><br>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+        <label name="leaseStart">Lease Start</label><input type="date" class="{{leaseStart_class}}" value="{{leaseStart}}" name="leaseStart" id="leaseStart"><br>
+        </div>
+        <div class="form-group">
+        <label name="leaseEnd">Lease End</label><input type="date" class="{{leaseEnd_class}}" value="{{leaseEnd}}" name="leaseEnd" id="leaseEnd"><br>
+        </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+        <label name="moveInDate">moveInDate</label><input type="date" class="{{moveInDate_class}}" value="{{moveInDate}}" name="moveInDate" id="moveInDate"><br>
+</div>
+<div class="form-group">
+        <input type="submit" value="Add Tenant" class="btn btn-primary">
+        </div>
+        </div>
     </form>
 {% endblock dashboard_content %}

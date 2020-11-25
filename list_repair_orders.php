@@ -23,45 +23,54 @@ terminate_on_query_error($success); //program will terminate on error
 
 $contractorArray = $contractorsQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 //var_dump($contractorArray);
-$company_names = array_column($contractorArray, 'company');
-var_dump($company_names);
-echo $company_names[0];
-echo $company_names[2];
+// $company_names = array_column($contractorArray, 'company');
+// var_dump($company_names);
+// echo $company_names[0];
+// echo $company_names[2];
 
 
-$company_options = "<select name=\"select\">";
-for($x=0; $x < count($company_names); $x += 1){
-    $company_options += ("<option value=\"\">".
-                            htmlspecialchars($company_names[$x]).
-                            "</option>")
-                        ;
-}
-$company_options += "</select>";
+// $company_options = "<select name=\"select\">";
+// for($x=0; $x < count($company_names); $x += 1){
+//     $company_options += ("<option value=\"\">".
+//                             htmlspecialchars($company_names[$x]).
+//                             "</option>")
+//                         ;
+// }
+// $company_options += "</select>";
 
 
-for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["Assign Contractor"=>"<a href='list_contractors.php?rid=".$resultArray[$x]["repairID"]."'>Assign</a>
-    <select name=\"select\"></select>"];
-    $resultArray[$x] += ["Contractors"=>$company_options];
-}
-        // <label for=\"contractor\">Contractor</label>
-        // <select class=\"\" name=\"contractor\">
-        //     {% for contractor in ".$contractorArray[2][] %}
-        //     <option value=\"".{{prov}}." {% if prov == contractor %} selected {% endif %} > {{prov}} </option> 
-        //    {% endfor %}
-        // </select>
-        // "];
+// <label for=\"contractor\">Contractor</label>
+// <select class=\"\" name=\"contractor\">
+//     {% for contractor in ".$contractorArray[2][] %}
+//     <option value=\"".{{prov}}." {% if prov == contractor %} selected {% endif %} > {{prov}} </option> 
+//    {% endfor %}
+// </select>
+// "];
 
 //         echo '<select name="select">';
 // while($row=mysql_fetch_array($contractorArray))
 // {
-//     echo '<option value="' . htmlspecialchars($row["company"]) . '">' 
+    //     echo '<option value="' . htmlspecialchars($row["company"]) . '">' 
 //         . htmlspecialchars($row[2]["company"]) 
 //         . '</option>';
 // }
 // echo '</select>';
 
-$keys = ["repairID","suiteNumber", "priority", "type", "inspectionDate","Assign Contractor","Contractors"];
+// Create select contractor menu
+$options = '';
+for($x=0; $x < count($contractorArray); $x += 1){
+    $options .= "<option value='".$contractorArray[$x]['name']."'>".$contractorArray[$x]['company']."</option>\n";
+}
+$company_options = "<form action='assign_contractor.php'><label for='company_options'>Choose a contractor:</label><select name=\"name\">\n$options\n</select><input type='submit' value='Assign Contractor'></form>";
+
+// Create assign link
+for($x=0; $x < count($resultArray); $x += 1){
+    //$resultArray[$x] += ["Assign Contractor"=>"<input type='submit' value='Assign Contractor'>"];
+    //["Assign Contractor"=>"<a href='assign_contractor.php?repairID=".$resultArray[$x]["repairID"]."&phone=".$resultArray[$x]["phoneNumber"]."'>Assign</a>"];
+    $resultArray[$x] += ["contractors"=>$company_options];
+}
+
+$keys = ["repairID","suiteNumber", "priority", "type", "inspectionDate","Assign Contractor","contractors"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
@@ -72,4 +81,4 @@ $renderParams = ["nav"=>navList(),
                  "keys" => $keys ];
 
 
-render_page("repair-order-stats.twig", $renderParams);
+render_page("repair-orders-stats.twig", $renderParams);
