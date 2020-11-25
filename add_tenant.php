@@ -8,6 +8,7 @@ $db = get_database_object();
 $tableQuery = $db->prepare("call getSuites()");
 $success = $tableQuery->execute();
 $resultArray = $tableQuery->get_result()->fetch_all(MYSQLI_ASSOC);
+$tableQuery->close();
 $renderParams["suites"] = $resultArray;
 $valid = true;
 $message = "";
@@ -84,7 +85,7 @@ if(!$valid){
     $data = $_POST;
     $db = get_database_object();
 
-    $tableQuery = $db->prepare("call insertOccupant(?, ? ,?, ?, ?, ?)");
+    $tableOccupantQuery = $db->prepare("call insertOccupant(?, ? ,?, ?, ?, ?)");
 
     $name = $data["name"];
     $phone = $data["phone"];
@@ -102,10 +103,12 @@ if(!$valid){
     $numberOfBikes = $data["numberOfBikes"];
     $storageLockerNumber =$data["storageLockerNumber"];
 
-    $tableQuery->bind_param('ssssii', $name, $phone, $email, $birthdate, 
+    $tableOccupantQuery->bind_param('ssssii', $name, $phone, $email, $birthdate, 
                                         $numberOfBikes, $storageLockerNumber);
 
-   $success = $tableQuery->execute();
+   $success = $tableOccupantQuery->execute();
+   terminate_on_query_error($success); 
+   $tableOccupantQuery->close();
 
    //If fields are not empty add as tenant
 
@@ -113,26 +116,36 @@ if(!$valid){
    $tableTenantIDQuery = $db->prepare("call getOccupantID(?, ? ,?)");
    $tableTenantIDQuery->bind_param('sss', $name, $phone, $email);
    $success = $tableTenantIDQuery->execute();
-   $result = $tableQuery->get_result();
+   terminate_on_query_error($success); 
+
+   $result = $tableTenantIDQuery->get_result();
    $value = $result->fetch_object();
-   $tenantID = $Value->ID;
+   $tenantID = $value->ID;
+   echo gettype($tenantID)."<br>";
+   $tableTenantIDQuery->close();
+
 
    // add into tenant
    $tableTenantQuery = $db->prepare("call insertTenant(?, ? ,?, ?)");
-   $numberOfPets = $data["numberOfPets"];
+   $numberOfPets = (int)$data["numberOfPets"];
+   echo gettype($numberOfPets)."<br>";
    $leaseStart = $data["leaseStart"];
+   echo gettype($leaseStart)."<br>";
    $leaseEnd = $data["leaseEnd"];
+  
+   echo gettype($leaseEnd)."<br>";
 
-   $tableTenantQuery->bind_param('ssssii', $tenantID, $numberOfPets, $leaseStart, $leaseEnd);
+   $tableTenantQuery->bind_param('iiss', $tenantID, $numberOfPets, $leaseStart, $leaseEnd);
     $success = $tableTenantQuery->execute();
+    terminate_on_query_error($success); 
    
-   // add into lives in
-   $tableLivesInQuery = $db->prepare("call insertLivesIn(?, ? ,?, ?)");
-   $suiteNumber = $date["suiteNum"];
-   $moveInDate = $data["moveInDate"];
+//    // add into lives in
+//    $tableLivesInQuery = $db->prepare("call insertLivesIn(?, ? ,?, ?)");
+//    $suiteNumber = $date["suiteNum"];
+//    $moveInDate = $data["moveInDate"];
    
-   $tableLivesInQuery->bind_param('iis', $tenantID, $suiteNumber, $moveInDate);
-   $success = $tableLivesInQuery->execute();
+//    $tableLivesInQuery->bind_param('iis', $tenantID, $suiteNumber, $moveInDate);
+//    $success = $tableLivesInQuery->execute();
 
 
 
