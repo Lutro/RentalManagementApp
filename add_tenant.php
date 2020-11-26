@@ -136,7 +136,7 @@ if(!$valid){
    
    // add into lives in
    $tableLivesInQuery = $db->prepare("call insertLivesIn(?, ?, ?)");
-   $suiteNumber = $data["suiteNumber"]; // does not work -- how to get the suite that was selected by the user from the drop down??
+   $suiteNumber = $data["suiteNumber"];
    $moveInDate = $data["moveInDate"];
    
    $tableLivesInQuery->bind_param('iis', $tenantID, $suiteNumber, $moveInDate);
