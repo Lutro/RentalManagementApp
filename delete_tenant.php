@@ -7,7 +7,7 @@ $dbh = get_database_object();
 terminate_on_connect_error();
 
 $tenantID = (int)$_GET['id'];
-echo gettype($tenantID);
+//echo gettype($tenantID);
 
 $tenantIDQuery = $dbh->prepare('call removeTenant(?)');
 $tenantIDQuery->bind_param('i', $tenantID);
