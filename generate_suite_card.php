@@ -3,17 +3,21 @@ require_once 'scripts/helper.php';
 
 
 
-// /*get the tenant information, to populate the tenant list from the database */
-// $dbh = get_database_object();
-// /* check connection */
-// terminate_on_connect_error();
+/*get the tenant information, to populate the tenant list from the database */
+$dbh = get_database_object();
+/* check connection */
+terminate_on_connect_error();
 
-// $tenantID = (int)$_GET['id'];
-// echo gettype($tenantID);
+$suiteNum = (int)$_GET['suiteNumber'];
 
-// $tenantIDQuery = $dbh->prepare('call removeTenant(?)');
-// $tenantIDQuery->bind_param('i', $tenantID);
-// $success = $tenantIDQuery->execute();
+$filterQuery = $dbh->prepare('call getSuiteBySuiteNum(?)');
+$filterQuery->bind_param('i', $suiteNum);
+$success = $filterQuery->execute();
+
+terminate_on_query_error($success); //program will terminate on error
+
+$resultArray = $filterQuery->get_result()->fetch_all(MYSQLI_BOTH);
+var_dump($resultArray);
 
 
 // if($success){                
@@ -36,13 +40,14 @@ require_once 'scripts/helper.php';
 // }
 // $keys = ["name","phone","email","numberOfBikes","storageLockerNumber","numberOfPets", "leaseStart", "leaseEnd","delete"];
 
-// $renderParams = ["nav"=>navList(), 
-//                  "address" =>address(), 
-//                  "title"=>title(),
-//                  "page_title"=>"Tenant List", 
-//                  "heading"=>"Tenants",
-//                  "table" => $resultArray,
-//                  "keys" => $keys ];
+$renderParams = ["nav"=>navList(), 
+                 "address" =>address(), 
+                 "title"=>title(),
+                 "page_title"=>"Suite", 
+                 "heading"=>"Suite",
+                 "suite" => $resultArray,
+                ];
 
 
-render_page("suite-card.twig", []);
+
+render_page("suite-card.twig", $renderParams);

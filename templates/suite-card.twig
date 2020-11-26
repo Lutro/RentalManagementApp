@@ -9,54 +9,54 @@
   <p>Resize this responsive page to see the effect!</p>
 </div> #}
 
-<div class="container">
+<div class="container text-center">
 
     <div class="row">
         <figure class="figure">
             <img src="img\pexels-vecislavas-popa-1571468.jpg" class="figure-img img-fluid rounded"
                 alt="A generic apartment placeholder image with rounded corners in a figure.">
-            <figcaption class="figure-caption text-right">Apartment {{suite['suiteNumber']}}</figcaption>
+            <figcaption class="figure-caption text-right">Apartment {{ suite[0].suiteNumber }} </figcaption>
         </figure>
     </div>
     <div class="row">
         <div class="col-sm-4">
             <h5>Suite Number</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>{{ suite[0].suiteNumber }} </p>
         </div>
         <div class="col-sm-4">
             <h5>Bedrooms</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>{{ suite[0].bedrooms }} </p>
         </div>
         <div class="col-sm-4">
             <h5>Bathrooms</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>{{ suite[0].bathrooms}} </p>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-4">
             <h5>Rent Amount</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>${{ suite[0].rentAmount}} </p>
         </div>
         <div class="col-sm-4">
-            <h5>Column 2</h5>
-            <p>Lorem ipsum dolor..</p>
+            <h5>Size</h5>
+            <p>{{ suite[0].size }} sq ft </p>
         </div>
         <div class="col-sm-4">
-            <h5>Column 3</h5>
+            <h5>Current Tenant</h5>
             <p>Lorem ipsum dolor..</p>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-4">
-            <h5>Column 1</h5>
+            <h5>Outstanding Repairs</h5>
             <p>Lorem ipsum dolor..</p>
         </div>
         <div class="col-sm-4">
-            <h5>Column 2</h5>
+            <h5>Occupied since</h5>
             <p>Lorem ipsum dolor..</p>
         </div>
         <div class="col-sm-4">
-            <h5>Column 3</h5>
+            <h5>Latest Inspection</h5>
             <p>Lorem ipsum dolor..</p>
         </div>
     </div>
