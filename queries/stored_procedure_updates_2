@@ -1,0 +1,9 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesRequiringInspection`()
+    NO SQL
+    COMMENT 'suites with inspections more than 6 months ago'
+SELECT suiteNumber as 'Suite Number', MAX(dateOfInspection) as 'Last Date of Inspection', DATEDIFF(CURRENT_DATE(),MAX(dateOfInspection)) as 'Days Since Last Inspection'
+FROM hasinspection
+GROUP BY suiteNumber
+ORDER BY MAX(dateOfInspection) ASC$$
+DELIMITER ;

@@ -15,13 +15,13 @@ terminate_on_query_error($success); //program will terminate on error
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
-$keys = ["suiteNumber", "dateOfInspection", "reason", "description"];
+$keys = ["Suite Number", "Last Date of Inspection", "Days Since Last Inspection"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
                  "page_title"=>"Suites Requiring Inspections", 
-                 "heading"=>"Suites With Inspections More than 6 Months Ago",
+                 "heading"=>"Last Inspection of Suites",
                  "table" => $resultArray,
                  "keys" => $keys ];
 
