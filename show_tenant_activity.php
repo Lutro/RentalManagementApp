@@ -19,8 +19,8 @@ $keys = ["Action ID", "Action", "Action Time","Tenant ID","Lease Start","Lease E
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
-                 "page_title"=>"Tenant Activity Log", 
-                 "heading"=>"Tenant Activity Log",
+                 "page_title"=>"Activity Log", 
+                 "heading"=>"Activity Log",
                  "table" => $resultArray,
                  "keys" => $keys ];
 
