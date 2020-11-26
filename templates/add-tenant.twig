@@ -10,59 +10,59 @@
             <input type="text" name ="formtype" value="{{formtype}}">
        </div> #}
         <div class="form-row">
-            <div class="form-group">
+            <div class="form-group col-md-5">
                 <label name="suiteNumber">Suite Number</label>
-                <select class="suite_class" name="suiteNumber">
+                <select class="suite_class form-control mb-2" name="suiteNumber">
                     {% for suite in suites %}
                     <option value="{{suite["suiteNumber"]}}" {% if suite["suiteNumber"] == suite %} selected {% endif %}>{{suite["suiteNumber"]}}</option>            
                     {% endfor %}
                 </select><br>
-            </div>
-            
-            <div class="form-group">
-                <label name="name">Name</label><input type="text" class="{{name_class}}" value="{{name}}" name="name" id="name"><br>
+            </div>          
+       
+            <div class="form-group col-md-5">
+                <label name="name">Name</label><input type="text" class="{{name_class}} form-control mb-2" value="{{name}}" name="name" id="name"><br>
             </div>
         </div>
 
         <div class="form-row">
-            <div class="form-group">
-                <label name="phone">Phone Number</label><input type="tel" class="{{phone_class}}" value="{{phone}}" name="phone" id="phone"><br>
+            <div class="form-group col-md-5">
+                <label name="phone">Phone Number</label><input type="tel" class="{{phone_class}} form-control mb-2" value="{{phone}}" name="phone" id="phone"><br>
             </div>
-            <div class="form-group">
-                <label for="email">E-mail</label><input type="email" class="{{email_class}}" name="email" id="email"><br>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label name="birthdate">Birthdate</label><input type="date" class="{{birthdate_class}}" value="{{birthdate}}" name="birthdate" id="birthdate"><br>
-            </div>
-            <div class="form-group">
-                <label name="numberOfBikes">Number of Bikes</label><input type="number" class="{{numberOfBikes_class}}" value="{{numberOfBikes}}" name="numberOfBikes" id="numberOfBikes"><br>
+            <div class="form-group col-md-5">
+                <label for="email">E-mail</label><input type="email" class="{{email_class}} form-control mb-2" name="email" id="email"><br>
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group">
-                <label name="storageLockerNumber">storageLockerNumber</label><input type="number" class="{{storageLockerNumber_class}}" value="{{storageLockerNumber}}" name="storageLockerNumber" id="storageLockerNumber"><br>
+            <div class="form-group col-md-5">
+                <label name="birthdate">Birthdate</label><input type="date" class="{{birthdate_class}} form-control mb-2" value="{{birthdate}}" name="birthdate" id="birthdate"><br>
             </div>
-            <div class="form-group">
-                <label name="numberOfPets">Number of Pets</label><input type="number" class="{{numberOfPets_class}}" value="{{numberOfPets}}" name="numberOfPets" id="numberOfPets"><br>
+            <div class="form-group col-md-5">
+                <label name="numberOfBikes">Number of Bikes</label><input type="number" class="{{numberOfBikes_class}} form-control mb-2" value="{{numberOfBikes}}" name="numberOfBikes" id="numberOfBikes"><br>
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group">
-        <label name="leaseStart">Lease Start</label><input type="date" class="{{leaseStart_class}}" value="{{leaseStart}}" name="leaseStart" id="leaseStart"><br>
+            <div class="form-group col-md-5">
+                <label name="storageLockerNumber">storageLockerNumber</label><input type="number" class="{{storageLockerNumber_class}} form-control mb-2" value="{{storageLockerNumber}}" name="storageLockerNumber" id="storageLockerNumber"><br>
+            </div>
+            <div class="form-group col-md-5">
+                <label name="numberOfPets">Number of Pets</label><input type="number" class="{{numberOfPets_class}} form-control mb-2" value="{{numberOfPets}}" name="numberOfPets" id="numberOfPets"><br>
+            </div>
         </div>
-        <div class="form-group">
-        <label name="leaseEnd">Lease End</label><input type="date" class="{{leaseEnd_class}}" value="{{leaseEnd}}" name="leaseEnd" id="leaseEnd"><br>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+        <label name="leaseStart">Lease Start</label><input type="date" class="{{leaseStart_class}} form-control mb-2" value="{{leaseStart}}" name="leaseStart" id="leaseStart"><br>
+        </div>
+        <div class="form-group col-md-5">
+        <label name="leaseEnd">Lease End</label><input type="date" class="{{leaseEnd_class}} form-control mb-2" value="{{leaseEnd}}" name="leaseEnd" id="leaseEnd"><br>
         </div>
         </div>
         <div class="form-row">
-            <div class="form-group">
-        <label name="moveInDate">moveInDate</label><input type="date" class="{{moveInDate_class}}" value="{{moveInDate}}" name="moveInDate" id="moveInDate"><br>
-</div>
-<div class="form-group">
-        <input type="submit" value="Add Tenant" class="btn btn-primary">
-        </div>
+            <div class="form-group col-md-5">
+                <label name="moveInDate">moveInDate</label><input type="date" class="{{moveInDate_class}} form-control mb-2" value="{{moveInDate}}" name="moveInDate" id="moveInDate"><br>
+            </div>
+            <div class="form-group col-md-5">
+                <input type="submit" value="Add Tenant" class="btn btn-primary">
+            </div>
         </div>
     </form>
 {% endblock dashboard_content %}
