@@ -4,26 +4,62 @@
 {% block dashboard_content %}
 
 
-<div class="jumbotron text-center">
+{# <div class="jumbotron text-center">
   <h1>My First Bootstrap Page</h1>
   <p>Resize this responsive page to see the effect!</p>
-</div>
+</div> #}
 
 <div class="container">
-  <div class="row">
-    <div class="col-sm-4">
-      <h3>Column 1</h3>
-      <p>Lorem ipsum dolor..</p>
+
+    <div class="row">
+        <figure class="figure">
+            <img src="img\pexels-vecislavas-popa-1571468.jpg" class="figure-img img-fluid rounded"
+                alt="A generic apartment placeholder image with rounded corners in a figure.">
+            <figcaption class="figure-caption text-right">Apartment {{suite['suiteNumber']}}</figcaption>
+        </figure>
     </div>
-    <div class="col-sm-4">
-      <h3>Column 2</h3>
-      <p>Lorem ipsum dolor..</p>
+    <div class="row">
+        <div class="col-sm-4">
+            <h5>Suite Number</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
+        <div class="col-sm-4">
+            <h5>Bedrooms</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
+        <div class="col-sm-4">
+            <h5>Bathrooms</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
     </div>
-    <div class="col-sm-4">
-      <h3>Column 3</h3>
-      <p>Lorem ipsum dolor..</p>
+    <div class="row">
+        <div class="col-sm-4">
+            <h5>Rent Amount</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
+        <div class="col-sm-4">
+            <h5>Column 2</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
+        <div class="col-sm-4">
+            <h5>Column 3</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
     </div>
-  </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h5>Column 1</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
+        <div class="col-sm-4">
+            <h5>Column 2</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
+        <div class="col-sm-4">
+            <h5>Column 3</h5>
+            <p>Lorem ipsum dolor..</p>
+        </div>
+    </div>
 </div>
 
 {% endblock dashboard_content %}
