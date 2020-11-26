@@ -15,13 +15,13 @@ terminate_on_query_error($success); //program will terminate on error
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
-$keys = ["suiteNumber","repairOrders"];
+$keys = ["Suite Number","Repair Orders"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
                  "page_title"=>"Repair Statistics", 
-                 "heading"=>"Repair Order Per Suite",
+                 "heading"=>"Total Repair Orders Per Suite",
                  "table" => $resultArray,
                  "keys" => $keys ];
 
