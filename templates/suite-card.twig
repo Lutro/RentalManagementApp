@@ -43,21 +43,21 @@
         </div>
         <div class="col-sm-4">
             <h5>Current Tenant</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>{{ suite[0].currentTenant }}{% if suite[0].occupiedSince is empty %} Unoccupied{% endif %}</p>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-4">
             <h5>Outstanding Repairs</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>{{ suite[0].outstandingRepairs }}{% if suite[0].outstandingRepairs is empty %} None{% endif %}</p>
         </div>
         <div class="col-sm-4">
             <h5>Occupied since</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>{{suite[0].occupiedSince}}{% if suite[0].occupiedSince is empty %} N/A{% endif %}</p>
         </div>
         <div class="col-sm-4">
             <h5>Latest Inspection</h5>
-            <p>Lorem ipsum dolor..</p>
+            <p>{{ suite[0].latestInspection }}{% if suite[0].latestInspection is empty %} N/A{% endif %}</p>
         </div>
     </div>
 </div>

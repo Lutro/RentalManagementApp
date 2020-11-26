@@ -14,7 +14,6 @@ terminate_on_query_error($success); //program will terminate on error
 
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
-
 $keys = ["Action ID", "Action", "Action Time","Tenant ID","Lease Start","Lease End"];
 
 $renderParams = ["nav"=>navList(), 
