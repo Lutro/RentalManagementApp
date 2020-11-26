@@ -17,9 +17,9 @@ $tenantQuery->close();
 
 
 for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["delete"=>"<a href='delete_tenant.php?id=".$resultArray[$x]["id"]."'>Delete</a>"];
+    $resultArray[$x] += ["Delete"=>"<a href='delete_tenant.php?id=".$resultArray[$x]["id"]."'>Delete</a>"];
 }
-$keys = ["name","phone","email","numberOfBikes","storageLockerNumber","numberOfPets", "leaseStart", "leaseEnd","delete"];
+$keys = ["Name","Phone","Email","Number of Bikes","Storage Locker Number","Number of Pets", "Lease Start", "Lease End","Delete"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
@@ -30,4 +30,4 @@ $renderParams = ["nav"=>navList(),
                  "keys" => $keys ];
 
 
-render_page("generic-table.twig", $renderParams);
+render_page("tenants-table.twig", $renderParams);

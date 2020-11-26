@@ -1,4 +1,4 @@
-{% extends "dashboard.twig" %}
+{% extends "tenant-dashboard.twig" %}
 
 {% block dashboard_content %}
 
@@ -8,7 +8,7 @@
         <div class="row m-l-0 m-r-0">
             <div class="col-sm-4 bg-c-lite-green user-profile">
                 <div class="card-block text-center text-white">
-                    <h6 class="f-w-600 lead"> {{ stall.stallNumber }}</h6>
+                    <h6 class="f-w-600 lead">Stall {{ stall.stallNumber }}</h6>
                 </div>
             </div>
             <div class="col-sm-8">
@@ -20,7 +20,7 @@
                                         <h6 class="text-muted f-w-400">{{ stall.rentAmount }}</h6>
                                     </div>
                                     <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">is Accessible</p>
+                                        <p class="m-b-10 f-w-600">Is Accessible</p>
                                         <h6 class="text-muted f-w-400">{{ stall.isAccessible }}</h6>
                                     </div>
                                     <div class="col-sm-6">
