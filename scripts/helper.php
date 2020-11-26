@@ -25,7 +25,7 @@ function navList(){
             [ "link" => 'list_tenants.php', "text"=> 'Tenants'],
             [ "link" => 'list_contractors.php', "text"=>'Contractors'],
 	    [ "link" => 'maintenance-landing.php', "text"=>'Maintenance'],
-	    [ "link" => 'mgmt_stats.php', "text"=>'Admin'],
+	    [ "link" => 'rent_admin.php', "text"=>'Rent Admin'],
             //[ "link" => 'availability.php', "text"=>'Availability'],
             //[ "link" => 'mgmt_stats.php', "text"=>'Reports']];
 	    [ "link" => 'user_profile.php', "text"=>'Reports']];
