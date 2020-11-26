@@ -15,7 +15,7 @@ terminate_on_query_error($success); //program will terminate on error
 $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
-$keys = ["reason", "inspections"];
+$keys = ["Reason", "Inspections"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
