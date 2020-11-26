@@ -92,8 +92,10 @@ $resultArray = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 // $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
-
-$keys = ["suiteNumber","bedrooms","bathrooms","rentAmount","size", "hasMasterKey"];
+for($x=0; $x < count($resultArray); $x += 1){
+    $resultArray[$x] += ["viewSuite"=>"<a href='generate_suite_card.php?suiteNumber=".$resultArray[$x]["suiteNumber"]."'>view</a>"];
+} 
+$keys = ["suiteNumber","bedrooms","bathrooms","rentAmount","size", "viewSuite"];
 $options = ["bedrooms","bathrooms","hasMasterKey"];
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
