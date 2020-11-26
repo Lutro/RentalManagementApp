@@ -1,0 +1,199 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrdersPerSuite`()
+    NO SQL
+    COMMENT 'number of repair orders per suite'
+SELECT suite.suiteNumber as 'Suite Number', COUNT(repairID) as 'Repair Orders'
+FROM suite
+LEFT JOIN generatesrepairorder ON generatesrepairorder.suiteNumber = suite.suiteNumber
+GROUP BY suite.suiteNumber$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrderStats`()
+    NO SQL
+    COMMENT 'number of repair orders per work type'
+SELECT type as 'Type', COUNT(repairID) as 'Repair Orders'
+FROM generatesrepairorder
+GROUP BY type$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTenants`()
+    NO SQL
+SELECT occupant.id, occupant.name as 'Name', occupant.phone as 'Phone', occupant.email as 'Email', occupant.numberOfBikes as 'Number of Bikes', occupant.storageLockerNumber as 'Storage Locker Number', tenant.numberOfPets as 'Number of Pets', tenant.leaseStart as 'Lease Start', tenant.leaseEnd as 'Lease End'
+FROM occupant
+INNER JOIN tenant ON occupant.ID = tenant.ID$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractors`()
+    NO SQL
+SELECT name as 'Name', phoneNumber as 'Phone Number', company as 'Company', address as 'Address', email as 'Email', workType as 'Work Type'
+FROM contractor$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTotalCurrentOccupants`()
+    NO SQL
+    COMMENT 'number of occupants currently living in building'
+SELECT COUNT(*) as 'Current Occupants'
+FROM
+(
+-- get occupants that are tenants that have current lease
+SELECT occupant.ID, leaseEnd
+FROM occupant
+INNER JOIN tenant
+ON occupant.ID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE()
+
+-- add to occupants that are not tenants but are living with someone who does have a current lease
+UNION
+
+(SELECT nontenantID as ID, leaseEnd
+FROM
+(SELECT nontenantID, tenantB as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantA
+
+UNION
+
+SELECT nontenantID, tenantA as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantB) as pairs
+
+INNER JOIN tenant
+ON pairs.tenantID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE() 
+) 
+) as final$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgTenancy`()
+    NO SQL
+    COMMENT 'computed from leaseStart to current date'
+SELECT ROUND(AVG(livingHere)/365,0) as Years,  ROUND(AVG(livingHere)%365,0) as Days
+FROM
+(
+-- get occupants that are tenants that have current lease
+SELECT occupant.ID, leaseStart, DATEDIFF(CURRENT_DATE(),leaseStart) as livingHere
+FROM occupant
+INNER JOIN tenant
+ON occupant.ID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE()
+
+-- add to occupants that are not tenants but are living with someone who does have a current lease
+UNION
+
+(SELECT nontenantID as ID, leaseStart, DATEDIFF(CURRENT_DATE(),leaseStart) as livingHere
+FROM
+(SELECT nontenantID, tenantB as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantA
+
+UNION
+
+SELECT nontenantID, tenantA as tenantID
+FROM
+-- occupants that are not a tenant (on the lease)
+(SELECT occupant.ID as nontenantID
+FROM `tenant` 
+RIGHT JOIN occupant ON tenant.ID = occupant.ID
+WHERE tenant.ID is null) AS nontenants 
+INNER JOIN cohabitateswith
+ON nontenants.nontenantID = cohabitateswith.tenantB) as pairs
+
+INNER JOIN tenant
+ON pairs.tenantID = tenant.ID
+WHERE leaseEnd > CURRENT_DATE() 
+) 
+) 
+as final$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractorWorkStats`()
+    NO SQL
+    COMMENT 'contractor repair order stats'
+SELECT contractor.name as 'Name', contractor.company as 'Company', workType as 'Work Type', SUM(case when status='complete' then 1 else 0 end) AS Completed, SUM(case when status='in progress' then 1 else 0 end) AS 'In Progress', ROUND(AVG(DATEDIFF(endDate,startDate)),1) as 'Average Days', ROUND(AVG(quoteAmount),2) as 'Average Quote ($)'
+FROM generatesrepairorder
+INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
+INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
+RIGHT JOIN contractor ON contractor.name = assignedto.contractorName AND contractor.phoneNumber = assignedto.contractorPhone
+GROUP BY contractor.name, contractor.phoneNumber$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesAllWorkedOn`()
+    NO SQL
+    COMMENT 'suites that have had all contractors work on them (division)'
+SELECT sx.suiteNumber as 'Suite Number', COUNT(generatesrepairorder.repairID) as 'Total Repairs'
+FROM suite as sx
+INNER JOIN generatesrepairorder ON generatesrepairorder.suiteNumber = sx.suiteNumber
+INNER JOIN assignedto ON assignedto.repairID = generatesrepairorder.repairID
+WHERE NOT EXISTS (
+(SELECT p.name, p.phoneNumber 
+ FROM contractor as p )
+EXCEPT
+(SELECT assignedto.contractorName, assignedto.contractorPhone 
+ FROM assignedto 
+ INNER JOIN generatesrepairorder ON generatesrepairorder.repairID = assignedto.repairID 
+ INNER JOIN suite ON suite.suiteNumber = generatesrepairorder.suiteNumber 
+ INNER JOIN contractor ON contractor.phoneNumber = assignedto.contractorPhone 
+ WHERE suite.suiteNumber = sx.suiteNumber ) 
+)$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgRepairLength`()
+    NO SQL
+    COMMENT 'average length of repair (days)'
+SELECT ROUND(AVG(DATEDIFF(endDate,startDate)),1) as Days
+FROM generatesrepairorder$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgQuoteAmount`()
+    NO SQL
+    COMMENT 'average quote amount for repair orders (overall + per type)'
+SELECT generatesrepairorder.type as Type, ROUND(AVG(quote.quoteAmount),2) as 'Average Quote ($)'
+FROM generatesrepairorder
+INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
+GROUP BY type$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getInspectionStats`()
+    NO SQL
+    COMMENT 'number of inspections per reason'
+SELECT reason as 'Reason', COUNT(reason) as Inspections
+FROM hasinspection
+GROUP BY reason$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getInspections`()
+    NO SQL
+SELECT suiteNumber as 'Suite Number', dateOfInspection as 'Inspection Date', reason as Reason, description as Description
+FROM hasinspection$$
+DELIMITER ;
+
+
