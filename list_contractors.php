@@ -33,9 +33,9 @@ $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
 for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["delete"=>"<a href='delete_contractor.php?name=".$resultArray[$x]["name"]."&phone=".$resultArray[$x]["phoneNumber"]."'>Delete</a>"];
+    $resultArray[$x] += ["Delete"=>"<a href='delete_contractor.php?name=".$resultArray[$x]["Name"]."&phone=".$resultArray[$x]["Phone Number"]."'>Delete</a>"];
 }
-$keys = ["name","phoneNumber","company","address","email", "workType", "delete"];
+$keys = ["Name","Phone Number","Company","Address","Email", "Work Type", "Delete"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
@@ -46,4 +46,4 @@ $renderParams = ["nav"=>navList(),
                  "keys" => $keys ];
 
 
-render_page("generic-table.twig", $renderParams);
+render_page("contractors-table.twig", $renderParams);
