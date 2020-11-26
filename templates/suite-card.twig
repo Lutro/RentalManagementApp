@@ -9,54 +9,54 @@
   <p>Resize this responsive page to see the effect!</p>
 </div> #}
 
-<div class="container text-center">
+<div class="container text-center border border-primary">
 
-    <div class="row">
-        <figure class="figure">
+    <div class="row border-bottom p-4">
+        <figure class="figure m-auto" style="max-width:70%;">
             <img src="img\pexels-vecislavas-popa-1571468.jpg" class="figure-img img-fluid rounded"
                 alt="A generic apartment placeholder image with rounded corners in a figure.">
-            <figcaption class="figure-caption text-right">Apartment {{ suite[0].suiteNumber }} </figcaption>
+            <figcaption class="figure-caption">Apartment {{ suite[0].suiteNumber }} </figcaption>
         </figure>
     </div>
     <div class="row">
-        <div class="col-sm-4">
-            <h5>Suite Number</h5>
+        <div class="col-sm-4 border">
+            <h6>Suite Number</h6>
             <p>{{ suite[0].suiteNumber }} </p>
         </div>
-        <div class="col-sm-4">
-            <h5>Bedrooms</h5>
+        <div class="col-sm-4 border">
+            <h6>Bedrooms</h6>
             <p>{{ suite[0].bedrooms }} </p>
         </div>
-        <div class="col-sm-4">
-            <h5>Bathrooms</h5>
+        <div class="col-sm-4 border">
+            <h6>Bathrooms</h6>
             <p>{{ suite[0].bathrooms}} </p>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4">
-            <h5>Rent Amount</h5>
+        <div class="col-sm-4 border">
+            <h6>Rent Amount</h6>
             <p>${{ suite[0].rentAmount}} </p>
         </div>
-        <div class="col-sm-4">
-            <h5>Size</h5>
+        <div class="col-sm-4 border">
+            <h6>Size</h6>
             <p>{{ suite[0].size }} sq ft </p>
         </div>
-        <div class="col-sm-4">
-            <h5>Current Tenant</h5>
+        <div class="col-sm-4 border">
+            <h6>Current Tenant</h6>
             <p>{{ suite[0].currentTenant }}{% if suite[0].occupiedSince is empty %} Unoccupied{% endif %}</p>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4">
-            <h5>Outstanding Repairs</h5>
+        <div class="col-sm-4 border">
+            <h6>Outstanding Repairs</h6>
             <p>{{ suite[0].outstandingRepairs }}{% if suite[0].outstandingRepairs is empty %} None{% endif %}</p>
         </div>
-        <div class="col-sm-4">
-            <h5>Occupied since</h5>
+        <div class="col-sm-4 border">
+            <h6>Occupied since</h6>
             <p>{{suite[0].occupiedSince}}{% if suite[0].occupiedSince is empty %} N/A{% endif %}</p>
         </div>
-        <div class="col-sm-4">
-            <h5>Latest Inspection</h5>
+        <div class="col-sm-4 border">
+            <h6>Latest Inspection</h6>
             <p>{{ suite[0].latestInspection }}{% if suite[0].latestInspection is empty %} N/A{% endif %}</p>
         </div>
     </div>
