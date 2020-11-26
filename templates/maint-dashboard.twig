@@ -1,0 +1,19 @@
+{% extends "base.twig" %}
+
+{% block header %}
+{% endblock header %}
+{% block main %}
+<main class="wrapper d-flex align-items-stretch">
+			{% include "maint-side-bar.twig" %}
+   
+<div class="padding col-">
+<div class="d-flex flex-wrap ml-2">
+{% block dashboard_content %}
+   
+{% endblock dashboard_content %}
+</div>
+</div>
+
+		
+</main
+{% endblock main %}
