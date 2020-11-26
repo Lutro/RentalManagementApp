@@ -62,8 +62,8 @@ if (!empty($_GET['bathrooms']))
 // }
 
 // the main query
-$sql = "SELECT * FROM suite INNER JOIN suitesize ON suite.bedrooms = suitesize.bedrooms AND
-        suite.bathrooms = suitesize.bathrooms";
+$sql = "SELECT s.suiteNumber as 'Suite Number', s.bedrooms as 'Bedrooms', s.bathrooms as 'Bathrooms', s.rentAmount as 'Rent Amount', ss.size as Size FROM suite s INNER JOIN suitesize ss ON s.bedrooms = ss.bedrooms AND
+        s.bathrooms = ss.bathrooms";
 
 // a smart code to add all conditions, if any
 if ($conditions)
@@ -93,9 +93,9 @@ $resultArray = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 // $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["viewSuite"=>"<a href='generate_suite_card.php?suiteNumber=".$resultArray[$x]["suiteNumber"]."'>view</a>"];
+    $resultArray[$x] += ["View Suite"=>"<a href='generate_suite_card.php?suiteNumber=".$resultArray[$x]["Suite Number"]."'>View</a>"];
 } 
-$keys = ["suiteNumber","bedrooms","bathrooms","rentAmount","size", "viewSuite"];
+$keys = ["Suite Number","Bedrooms","Bathrooms","Rent Amount","Size", "View Suite"];
 $options = ["bedrooms","bathrooms","hasMasterKey"];
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
