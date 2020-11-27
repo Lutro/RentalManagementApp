@@ -4,54 +4,54 @@ This project built a property management application called Renty, intended to b
 
 # Installation Instructions
 
-1) Clone the repository to your htdocs directory within XAMPP on your computer (https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository) 
+1) Clone the repository to your `htdocs` directory within `XAMPP` on your computer (https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository) 
 
-2) In the scripts folder, find the file program_constants.php and edit lines 3 and 5 to update the database username and password to your own (for phpMyAdmin)
+2) In the scripts folder, find the file `program_constants.php` and edit lines 3 and 5 to update the database username and password to your own (for phpMyAdmin)
 
-3) In the sql folder, find the file propertymanagement.sql (will be used next) 
+3) In the sql folder, find the file `propertymanagement.sql` (will be used next) 
 
-4) In phpMyAdmin, create a new database called propertymanagement 
+4) In phpMyAdmin, create a new database called `propertymanagement`
 
-5) Navigate to the Import tab and import the propertymanagement.sql file to create all of the database tables and accompanying data. If error occurs with #1558 – Column count of mysql.proc is wrong....Please use mysql_upgrade to fix this error:  
-Go to xampp directory: cd /opt/lampp/bin  
-mysql_upgrade –u root –p  
-Restart xampp and you are good to go!  
+5) Navigate to the Import tab and import the `propertymanagement.sql` file to create all of the database tables and accompanying data. If error occurs with `#1558 – Column count of mysql.proc is wrong`....Please use `mysql_upgrade` to fix this error:  
+Go to XAMPP directory: `cd /opt/lampp/bin`  
+Run `mysql_upgrade –u root –p`  
+Restart XAMPP and you are good to go!  
 
-9) In your internet browser, go to localhost/RentalManagementApp to see the application! 
+9) In your internet browser, go to `localhost/RentalManagementApp` to see the application! 
 
 # List of SQL Queries Used in Demo
 
 **Projection query – view contractors**  
 nav: Contractors > View Contractors  
-stored procedure: getContractors() 
+stored procedure: `getContractors()` 
 
 **Selection query – view suite**  
 nav: Suites > View [suite]  
-stored procedure: getSuiteBySuiteNum() 
+stored procedure: `getSuiteBySuiteNum()` 
 
 **Join query – view tenants**  
 nav: Tenants > View Tenants  
-stored procedure: getTenants() 
+stored procedure: `getTenants()` 
 
 **Division query – suites all contractors have worked on**  
 nav: Reports > Contractor Stats > Suites All Worked On  
-stored procedure: getSuitesAllWorkedOn() 
+stored procedure: `getSuitesAllWorkedOn()` 
 
 **Aggregation query – contractor work stats, last inspection of suites**  
 nav: Reports > Contractor Stats > Work Stats; Reports > Inspection Stats > Last Inspection of Suites   
-stored procedure: getContractorWorkStats(); getSuitesRequiringInspection() 
+stored procedure: `getContractorWorkStats()`; `getSuitesRequiringInspection()`
 
 **Nested aggregation with group-by – average quote per quite**  
 nav: Reports > Repair Stats > Average Quote Per Suite  
-stored procedure: getSuiteAvgSpent() 
+stored procedure: `getSuiteAvgSpent()` 
 
 **Deletion operation – delete tenant**  
 nav:  Tenants > View Tenants > Delete [tenant]  
-stored procedure: removeTenant() 
+stored procedure: `removeTenant()` 
 
 **Update operation – edit tenant**  
 nav:  Tenants > View Tenants > Edit [tenant]  
-stored procedure: updateTenantInfo() 
+stored procedure: `updateTenantInfo()` 
 
 **Extra features**  
 - Used bootstrap to implement the interface 
