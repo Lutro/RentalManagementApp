@@ -22,39 +22,6 @@ $success = $contractorsQuery->execute();
 terminate_on_query_error($success); //program will terminate on error
 
 $contractorArray = $contractorsQuery->get_result()->fetch_all(MYSQLI_ASSOC);
-//var_dump($contractorArray);
-// $company_names = array_column($contractorArray, 'company');
-// var_dump($company_names);
-// echo $company_names[0];
-// echo $company_names[2];
-
-
-// $company_options = "<select name=\"select\">";
-// for($x=0; $x < count($company_names); $x += 1){
-//     $company_options += ("<option value=\"\">".
-//                             htmlspecialchars($company_names[$x]).
-//                             "</option>")
-//                         ;
-// }
-// $company_options += "</select>";
-
-
-// <label for=\"contractor\">Contractor</label>
-// <select class=\"\" name=\"contractor\">
-//     {% for contractor in ".$contractorArray[2][] %}
-//     <option value=\"".{{prov}}." {% if prov == contractor %} selected {% endif %} > {{prov}} </option> 
-//    {% endfor %}
-// </select>
-// "];
-
-//         echo '<select name="select">';
-// while($row=mysql_fetch_array($contractorArray))
-// {
-    //     echo '<option value="' . htmlspecialchars($row["company"]) . '">' 
-//         . htmlspecialchars($row[2]["company"]) 
-//         . '</option>';
-// }
-// echo '</select>';
 
 // Create select contractor menu
 $options = '';
@@ -71,7 +38,7 @@ for($x=0; $x < count($resultArray); $x += 1){
     $resultArray[$x] += ["Assign Contractor"=>$company_options];
 }
 
-$keys = ["repairID","suiteNumber", "priority", "type", "startDate","endDate","inspectionDate","Assign Contractor"];
+$keys = ["Repair ID","Suite Number", "Priority", "Type", "Start Date","End Date","Inspection Date","Assign Contractor"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
