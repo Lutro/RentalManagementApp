@@ -24,18 +24,61 @@ $dbh = get_database_object();
 /* check connection */
 terminate_on_connect_error();
 
-$tenantQuery = $dbh->prepare('call getContractors()');
-$success = $tenantQuery->execute();
+// just stub values for pagination
+// calculate your own values
+$offset = 0;
+$limit = 25;
 
-terminate_on_query_error($success); //program will terminate on error
+// always initialize a variable before use!
+$conditions = [];
+$parameters = [];
 
-$resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
+// conditional statements
+if (!empty($_GET['Name']))
+{
+    // here we are using LIKE with wildcard search
+    // use it ONLY if really need it
+    $conditions[] = 'Name LIKE ?';
+    $parameters[] = '%'.$_GET['Name']."%";
+}
+
+if (!empty(valueIfExists('PhoneNumber', $_GET)))
+{
+    
+    $conditions[] = 'Phone LIKE ?';
+    $parameters[] = '%'.$_GET['PhoneNumber']."%";
+}
+
+// the main query
+$sql = "SELECT name as 'Name', phoneNumber as 'Phone Number', company as 'Company', address as 'Address', email as 'Email', workType as 'Work Type'
+FROM contractor";
+
+// a smart code to add all conditions, if any
+if ($conditions)
+{
+    $sql .= " WHERE ".implode(" AND ", $conditions);
+}
+
+// a search query always needs at least a `LIMIT` clause, 
+// especially if no filters were used. so we have to add it to our query:
+$sql .= " LIMIT ?,?";
+$parameters[] = $offset;
+$parameters[] = $limit;
+
+// the usual prepare/bind/execute/fetch routine
+
+$stmt = $dbh->prepare($sql);
+
+$stmt->bind_param(str_repeat("s", count($parameters)), ...$parameters);
+$stmt->execute();
+$resultArray = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
 for($x=0; $x < count($resultArray); $x += 1){
     $resultArray[$x] += ["Delete"=>"<a href='delete_contractor.php?name=".$resultArray[$x]["Name"]."&phone=".$resultArray[$x]["Phone Number"]."'>Delete</a>"];
 }
 $keys = ["Name","Phone Number","Company","Address","Email", "Work Type", "Delete"];
+$options = ["Name","PhoneNumber"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
@@ -43,7 +86,8 @@ $renderParams = ["nav"=>navList(),
                  "page_title"=>"List of Contractors", 
                  "heading"=>"Contractors",
                  "table" => $resultArray,
-                 "keys" => $keys ];
+                 "keys" => $keys,
+                "options" => $options ];
 
 
 render_page("contractors-table.twig", $renderParams);

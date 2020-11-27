@@ -58,10 +58,10 @@ $stmt->execute();
 $resultArray = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["Edit"=>"<a href='edit_tenant.php?id=".$resultArray[$x]["id"]."'>edit</a>"];
+    $resultArray[$x] += ["Edit"=>"<a href='edit_tenant.php?id=".$resultArray[$x]["id"]."'>Edit</a>"];
 }
 for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["Delete"=>"<a href='delete_tenant.php?id=".$resultArray[$x]["id"]."'>delete</a>"];
+    $resultArray[$x] += ["Delete"=>"<a href='delete_tenant.php?id=".$resultArray[$x]["id"]."'>Delete</a>"];
 }
 $keys = ["Name","Phone","Email","Number of Bikes","Storage Locker Number","Number of Pets", "Lease Start", "Lease End","Edit","Delete"];
 $options = ["Name","PhoneNumber"];
