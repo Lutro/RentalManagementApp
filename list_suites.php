@@ -73,15 +73,6 @@ $stmt->execute();
 $resultArray = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 
-
-
-// $tenantQuery = $dbh->prepare('call getSuites()');
-// $success = $tenantQuery->execute();
-
-// terminate_on_query_error($success); //program will terminate on error
-
-// $resultArray = $tenantQuery->get_result()->fetch_all(MYSQLI_ASSOC);
-
 for($x=0; $x < count($resultArray); $x += 1){
     $resultArray[$x] += ["View Suite"=>"<a href='generate_suite_card.php?suiteNumber=".$resultArray[$x]["Suite Number"]."'>View</a>"];
 } 
