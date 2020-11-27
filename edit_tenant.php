@@ -9,7 +9,7 @@ $dbh = get_database_object();
 terminate_on_connect_error();
 
 $tenantID = (int)$_GET['id'];
-echo ($tenantID);
+
 $tableQuery = $dbh->prepare("call getTenantByID(?)");
 $tableQuery->bind_param('i', $tenantID);
 $success = $tableQuery->execute();
