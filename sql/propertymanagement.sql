@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 25, 2020 at 12:16 AM
+-- Generation Time: Nov 27, 2020 at 02:13 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
@@ -53,14 +53,14 @@ FROM hasparkingstall$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgQuoteAmount` ()  NO SQL
     COMMENT 'average quote amount for repair orders (overall + per type)'
-SELECT generatesrepairorder.type, ROUND(AVG(quote.quoteAmount),2) as AverageQuote
+SELECT generatesrepairorder.type as Type, ROUND(AVG(quote.quoteAmount),2) as 'Average Quote ($)'
 FROM generatesrepairorder
 INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
-GROUP BY type WITH ROLLUP$$
+GROUP BY type$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgRepairLength` ()  NO SQL
     COMMENT 'average length of repair (days)'
-SELECT ROUND(AVG(DATEDIFF(endDate,startDate)),1) as avgDays
+SELECT ROUND(AVG(DATEDIFF(endDate,startDate)),1) as Days
 FROM generatesrepairorder$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgSuiteRent` ()  NO SQL
@@ -71,7 +71,7 @@ GROUP BY bedrooms WITH ROLLUP$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAvgTenancy` ()  NO SQL
     COMMENT 'computed from leaseStart to current date'
-SELECT ROUND(AVG(livingHere)/365,0) as years,  ROUND(AVG(livingHere)%365,0) as days
+SELECT ROUND(AVG(livingHere)/365,0) as Years,  ROUND(AVG(livingHere)%365,0) as Days
 FROM
 (
 -- get occupants that are tenants that have current lease
@@ -116,12 +116,12 @@ WHERE leaseEnd > CURRENT_DATE()
 as final$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractors` ()  NO SQL
-SELECT *
+SELECT name as 'Name', phoneNumber as 'Phone Number', company as 'Company', address as 'Address', email as 'Email', workType as 'Work Type'
 FROM contractor$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getContractorWorkStats` ()  NO SQL
     COMMENT 'contractor repair order stats'
-SELECT contractor.name, contractor.phoneNumber, workType, SUM(case when status='complete' then 1 else 0 end) AS completed, SUM(case when status='in progress' then 1 else 0 end) AS inProgress, ROUND(AVG(DATEDIFF(endDate,startDate)),1) as avgDays, ROUND(AVG(quoteAmount),2) as avgQuote
+SELECT contractor.name as 'Name', contractor.company as 'Company', workType as 'Work Type', SUM(case when status='complete' then 1 else 0 end) AS Completed, SUM(case when status='in progress' then 1 else 0 end) AS 'In Progress', ROUND(AVG(DATEDIFF(endDate,startDate)),1) as 'Average Days', ROUND(AVG(quoteAmount),2) as 'Average Quote ($)'
 FROM generatesrepairorder
 INNER JOIN quote ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
 INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
@@ -135,9 +135,13 @@ FROM `generatesrepairorder`
 INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
 WHERE status LIKE 'in progress'$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getInspections` ()  NO SQL
+SELECT suiteNumber as 'Suite Number', dateOfInspection as 'Inspection Date', reason as Reason, description as Description
+FROM hasinspection$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getInspectionStats` ()  NO SQL
     COMMENT 'number of inspections per reason'
-SELECT reason, COUNT(reason) as inspections
+SELECT reason as 'Reason', COUNT(reason) as Inspections
 FROM hasinspection
 GROUP BY reason$$
 
@@ -152,6 +156,14 @@ SELECT occupant.name, occupant.email, occupant.phone, manager.managerSince
 FROM occupant
 INNER JOIN manager ON occupant.ID = manager.ID
 WHERE manager.managerUntil IS NULL$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getOccupantID` (IN `name1` VARCHAR(50), IN `phone1` VARCHAR(20), IN `email1` VARCHAR(50))  NO SQL
+    COMMENT 'get occupant ID based on name, phone, and email'
+SELECT ID
+FROM occupant
+WHERE name LIKE name1
+AND phone LIKE phone1
+AND email LIKE email1$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getParkingAvailability` ()  NO SQL
     COMMENT 'get total number of parking stalls free/taken'
@@ -173,14 +185,14 @@ FROM generatesrepairorder$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrdersPerSuite` ()  NO SQL
     COMMENT 'number of repair orders per suite'
-SELECT suite.suiteNumber, COUNT(repairID) as repairOrders
+SELECT suite.suiteNumber as 'Suite Number', COUNT(repairID) as 'Repair Orders'
 FROM suite
-INNER JOIN generatesrepairorder ON generatesrepairorder.suiteNumber = suite.suiteNumber
-GROUP BY suiteNumber$$
+LEFT JOIN generatesrepairorder ON generatesrepairorder.suiteNumber = suite.suiteNumber
+GROUP BY suite.suiteNumber$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrderStats` ()  NO SQL
     COMMENT 'number of repair orders per work type'
-SELECT type, COUNT(repairID) as repairOrders
+SELECT type as 'Type', COUNT(repairID) as 'Repair Orders'
 FROM generatesrepairorder
 GROUP BY type$$
 
@@ -268,6 +280,18 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteBedroomNumbers` ()  NO SQL
 SELECT DISTINCT bedrooms
 FROM suite$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteBySuiteNum` (IN `suiteNumber` INT)  NO SQL
+SELECT s.suiteNumber, s.bedrooms, s.bathrooms, s.rentAmount, suitesize.size, x.name as currentTenant, x.leaseStart as occupiedSince, t.type as outstandingRepairs, MAX(i.dateOfInspection) as latestInspection
+FROM suite as s
+INNER JOIN suitesize ON s.bedrooms = suitesize.bedrooms AND s.bathrooms = suitesize.bathrooms
+LEFT JOIN (SELECT l.suiteNumber, l.tenantID, occupant.name, tenant.leaseStart FROM livesin l INNER JOIN occupant ON l.tenantID = occupant.ID INNER JOIN tenant ON l.tenantID = tenant.ID) as x ON s.suiteNumber = x.suiteNumber
+LEFT JOIN 
+(SELECT g.suiteNumber, g.type, a.status FROM generatesrepairorder g INNER JOIN assignedto a ON g.repairID = a.repairID) as t ON t.suiteNumber = s.suiteNumber AND t.status = 'in progress'
+LEFT JOIN 
+(SELECT h.suiteNumber, h.dateOfInspection FROM hasinspection h) as i ON i.suiteNumber = s.suiteNumber
+WHERE s.suiteNumber = suiteNumber
+GROUP BY s.suiteNumber, s.bedrooms, s.bathrooms, s.rentAmount, suitesize.size, x.name, x.leaseStart$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteOccupancy` ()  NO SQL
     COMMENT 'suite info (number of occupants, pets, etc)'
 SELECT livesin.suiteNumber, suite.bedrooms AS Bedrooms, suite.bathrooms as Bathrooms, COUNT(cohabitateswith.tenantA) AS Occupants, tenant.numberOfPets AS Pets, tenant.leaseStart AS LeaseStart, tenant.leaseEnd AS LeaseEnd
@@ -282,11 +306,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuites` ()  NO SQL
 SELECT suite.suiteNumber, suite.bedrooms, suite.bathrooms, suite.rentAmount, suitesize.size, suite.hasMasterKey
 FROM suite
 INNER JOIN suitesize ON suite.bedrooms = suitesize.bedrooms 
-AND suite.bathrooms = suitesize.bathrooms$$
+AND suite.bathrooms = suitesize.bathrooms
+ORDER BY suite.suiteNumber ASC$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesAllWorkedOn` ()  NO SQL
     COMMENT 'suites that have had all contractors work on them (division)'
-SELECT sx.suiteNumber, COUNT(generatesrepairorder.repairID) as TotalRepairs
+SELECT sx.suiteNumber as 'Suite Number', COUNT(generatesrepairorder.repairID) as 'Total Repairs'
 FROM suite as sx
 INNER JOIN generatesrepairorder ON generatesrepairorder.suiteNumber = sx.suiteNumber
 INNER JOIN assignedto ON assignedto.repairID = generatesrepairorder.repairID
@@ -326,14 +351,25 @@ FROM hasinspection
 INNER JOIN suite ON suite.suiteNumber = hasinspection.suiteNumber
 WHERE DATE(hasinspection.dateOfInspection) < DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTenantActivityLog` ()  NO SQL
+SELECT log_id as 'Action ID', action as Action, action_time as 'Action Time', ID as 'Tenant ID', leaseStart as 'Lease Start', leaseEnd as 'Lease End'
+FROM activity_log$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTenantByID` (IN `tenantID` INT)  NO SQL
+SELECT livesin.suiteNumber, occupant.name as 'Name', occupant.phone as 'Phone', occupant.email as 'Email', occupant.birthdate, occupant.numberOfBikes as 'Number of Bikes', occupant.storageLockerNumber as 'Storage Locker Number', tenant.numberOfPets as 'Number of Pets', tenant.leaseStart as 'Lease Start', tenant.leaseEnd as 'Lease End', livesin.moveInDate, livesin.moveOutDate
+FROM occupant
+INNER JOIN tenant ON occupant.ID = tenant.ID
+INNER JOIN livesin ON occupant.ID = livesin.tenantID
+WHERE occupant.ID = tenantID$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getTenants` ()  NO SQL
-SELECT occupant.name, occupant.phone, occupant.email, occupant.numberOfBikes, occupant.storageLockerNumber, tenant.numberOfPets, tenant.leaseStart, tenant.leaseEnd
+SELECT occupant.id, occupant.name as 'Name', occupant.phone as 'Phone', occupant.email as 'Email', occupant.numberOfBikes as 'Number of Bikes', occupant.storageLockerNumber as 'Storage Locker Number', tenant.numberOfPets as 'Number of Pets', tenant.leaseStart as 'Lease Start', tenant.leaseEnd as 'Lease End'
 FROM occupant
 INNER JOIN tenant ON occupant.ID = tenant.ID$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getTotalCurrentOccupants` ()  NO SQL
     COMMENT 'number of occupants currently living in building'
-SELECT COUNT(*) as currentOccupants
+SELECT COUNT(*) as 'Current Occupants'
 FROM
 (
 -- get occupants that are tenants that have current lease
@@ -390,9 +426,19 @@ FROM `generatesrepairorder`
 INNER JOIN assignedto ON generatesrepairorder.repairID = assignedto.repairID
 WHERE contractorName IS NULL AND contractorPhone IS NULL$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertLivesIn` (IN `id` INT, IN `suite` INT, IN `movein` DATE)  NO SQL
+    COMMENT 'insert to lives in table'
+INSERT INTO livesin (tenantID, suiteNumber, moveInDate)
+VALUES (id, suite, movein)$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertOccupant` (IN `name` VARCHAR(50), IN `phone` VARCHAR(20), IN `email` VARCHAR(50), IN `birthdate` DATE, IN `numberOfBikes` INT, IN `storageLockerNumber` INT)  NO SQL
 INSERT INTO occupant(name, phone, email, birthdate, numberOfBikes, storagelockerNumber)
 VALUES(name, phone, email, birthdate, numberOfBikes, storagelockerNumber)$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertTenant` (IN `id` INT, IN `pets` INT, IN `leasestart` DATE, IN `leaseend` DATE)  NO SQL
+    COMMENT 'insert a new tenant'
+INSERT INTO tenant (ID, numberOfPets, leaseStart, leaseEnd)
+VALUES (id, pets, leasestart, leaseend)$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `removeContractor` (IN `n` VARCHAR(100), IN `phone` VARCHAR(50))  NO SQL
     COMMENT 'remove contractor'
@@ -404,7 +450,7 @@ DELETE FROM suite WHERE suiteNumber = sid$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `removeTenant` (IN `tid` INT)  NO SQL
     COMMENT 'remove tenant'
-DELETE FROM tenant WHERE ID = tid$$
+DELETE FROM occupant WHERE ID = tid$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateOccupantInfo` (IN `oid` INT, IN `n` VARCHAR(50), IN `p` VARCHAR(20), IN `e` VARCHAR(50), IN `bd` DATE, IN `nob` INT, IN `sln` INT)  NO SQL
     COMMENT 'update occupant information'
@@ -427,6 +473,28 @@ SET bedrooms = beds,
 WHERE suiteNumber = sn$$
 
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activity_log`
+--
+
+CREATE TABLE `activity_log` (
+  `log_id` int(11) NOT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `action_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `ID` int(11) NOT NULL,
+  `leaseStart` date NOT NULL,
+  `leaseEnd` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `activity_log`
+--
+
+INSERT INTO `activity_log` (`log_id`, `action`, `action_time`, `ID`, `leaseStart`, `leaseEnd`) VALUES
+(1, 'insert', '2020-11-26 03:56:45', 131, '2019-12-12', NULL);
 
 -- --------------------------------------------------------
 
@@ -621,9 +689,9 @@ INSERT INTO `hasparkingstall` (`stallNumber`, `rentAmount`, `isAccessible`, `ten
 (3, 125, 1, 2),
 (4, 150, 0, 1),
 (5, 100, 1, NULL),
-(6, 125, 1, 11),
+(6, 125, 1, NULL),
 (7, 125, 1, NULL),
-(8, 100, 0, 19);
+(8, 100, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -722,7 +790,8 @@ INSERT INTO `occupant` (`ID`, `name`, `phone`, `email`, `birthdate`, `numberOfBi
 (20, 'Tara Simon', '2368521169', 'tarasimons@gmail.com', '1988-11-24', 1, 20),
 (21, 'Carmelo Barnes', '2361254559', 'carmelob32@gmail.com', '1995-10-25', 0, 21),
 (22, 'Malachi Marquez', '7787325698', 'malachimq22@gmail.com', '2003-08-24', 1, 22),
-(101, 'Test Occupant 1', '6043792646', 'test@gmail.com', '2020-11-26', 1, 3);
+(101, 'Test Occupant 1', '6043792646', 'test@gmail.com', '2020-11-26', 1, 3),
+(131, 'bobby brown', '6053223445', 'lost@gmail.com', '2020-03-24', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -841,14 +910,44 @@ INSERT INTO `tenant` (`ID`, `numberOfPets`, `leaseStart`, `leaseEnd`) VALUES
 (11, 1, '1997-01-31', '2022-01-31'),
 (12, 1, '1999-03-31', '2024-03-31'),
 (13, 2, '1992-04-30', '2022-04-30'),
-(15, 1, '2020-03-31', '2045-03-31'),
 (17, 1, '2015-02-01', '2040-02-01'),
 (19, 1, '2000-06-30', '2030-06-30'),
-(21, 0, '2000-04-30', '2030-04-30');
+(131, 3, '2019-12-12', '0000-00-00');
+
+--
+-- Triggers `tenant`
+--
+DELIMITER $$
+CREATE TRIGGER `ad_data` AFTER DELETE ON `tenant` FOR EACH ROW BEGIN
+  INSERT INTO activity_log (action, action_time, ID, leaseStart, leaseEnd)
+  VALUES('Deleted Tenant', NOW(), OLD.ID, OLD.leaseStart, OLD.leaseEnd);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `ai_data` AFTER INSERT ON `tenant` FOR EACH ROW BEGIN
+  INSERT INTO activity_log (action, action_time, ID, leaseStart)
+  VALUES('Added new tenant', NOW(), NEW.ID, NEW.leaseStart);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `au_data` AFTER UPDATE ON `tenant` FOR EACH ROW BEGIN
+  INSERT INTO data_log (action, action_time, ID, leaseStart, leaseEnd)
+  VALUES('Updated tenant', NOW(), NEW.ID, NEW.leaseStart, NEW.leaseEnd);
+END
+$$
+DELIMITER ;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  ADD PRIMARY KEY (`log_id`);
 
 --
 -- Indexes for table `assignedto`
@@ -944,10 +1043,16 @@ ALTER TABLE `tenant`
 --
 
 --
+-- AUTO_INCREMENT for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `occupant`
 --
 ALTER TABLE `occupant`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
 
 --
 -- Constraints for dumped tables

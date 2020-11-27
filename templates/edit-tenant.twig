@@ -1,0 +1,71 @@
+{% extends "tenant-dashboard.twig" %}
+
+{% block dashboard_content %}
+        {% autoescape false %}
+           {{message}}
+        {% endautoescape %}
+    </div>
+    <form class="general" action="#" method="post" class="tenantEntry">
+        {# <div class="formtype" style="display: none;">
+            <input type="text" name ="formtype" value="{{formtype}}">
+       </div> #}
+        <div class="form-row">
+            <div class="form-group col-md-5" style="max-width: 50%;">
+                <label name="suiteNumber">Suite Number</label>
+                <select class="suite_class form-control mb-2" name="suiteNumber">
+                    {% for suite in suites %}
+                    <option value="{{suite["suiteNumber"]}}" {% if suite["suiteNumber"] == suite %} selected {% endif %}>{{suite["suiteNumber"]}}</option>            
+                    {% endfor %}
+                </select><br>
+            </div>          
+       
+            <div class="form-group col-md-5">
+                <label name="name">Name</label><input type="text" class="{{name_class}} form-control mb-2" placeholder="<required>" value="{{suites[0]['Name']}}" name="name" id="name"><br>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label name="phone">Phone Number</label><input type="tel" class="{{phone_class}} form-control mb-2" placeholder="<required>" value="{{ suites[0]['Phone']}}" name="phone" id="phone"><br>
+            </div>
+            <div class="form-group col-md-5">
+                <label for="email">E-mail</label><input type="email" class="{{email_class}} form-control mb-2" placeholder="<required>" value="{{suites[0]["Email"]}}" name="email" id="email"><br>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label name="birthdate">Birthdate</label><input type="date" class="{{birthdate_class}} form-control mb-2" placeholder="<required>" value="{{suites[0]["birthdate"]}}" name="birthdate" id="birthdate"><br>
+            </div>
+            <div class="form-group col-md-5">
+                <label name="numberOfBikes">Number of Bikes</label><input type="number" class="{{numberOfBikes_class}} form-control mb-2" placeholder="<required>" value="{{suites[0]["Number of Bikes"]}}" name="numberOfBikes" id="numberOfBikes"><br>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label name="storageLockerNumber">Storage Locker Number</label><input type="number" class="{{storageLockerNumber_class}} form-control mb-2" placeholder="<required>" value="{{suites[0]['Storage Locker Number']}}" name="storageLockerNumber" id="storageLockerNumber"><br>
+            </div>
+            <div class="form-group col-md-5">
+                <label name="numberOfPets">Number of Pets</label><input type="number" class="{{numberOfPets_class}} form-control mb-2" value="{{ suites[0]['Number of Pets'] }}" name="numberOfPets" id="numberOfPets"><br>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+        <label name="leaseStart">Lease Start</label><input type="date" class="{{leaseStart_class}} form-control mb-2" value="{{suites[0]["Lease Start"]}}" name="leaseStart" id="leaseStart"><br>
+        </div>
+        <div class="form-group col-md-5">
+        <label name="leaseEnd">Lease End</label><input type="date" class="{{leaseEnd_class}} form-control mb-2" value="{{suites[0]['Lease End']}}" name="leaseEnd" id="leaseEnd"><br>
+        </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label name="moveInDate">Move In Date</label><input type="date" class="{{moveInDate_class}} form-control mb-2" value="{{suites[0]["moveInDate"]}}" name="moveInDate" id="moveInDate"><br>
+            </div>
+              <div class="form-group col-md-5">
+                <label name="moveOutDate">Move Out Date</label><input type="date" class="{{moveOutDate_class}} form-control mb-2" value="{{suites[0]["moveOutDate"]}}" name="moveInDate" id="moveInDate"><br>
+            </div>
+        </div>
+            <div class="form-group col-md-5">
+                <input type="submit" value="Add Tenant" class="btn btn-primary">
+            </div>
+    </form>
+{% endblock dashboard_content %}

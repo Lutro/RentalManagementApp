@@ -17,9 +17,12 @@ $tenantQuery->close();
 
 
 for($x=0; $x < count($resultArray); $x += 1){
-    $resultArray[$x] += ["Delete"=>"<a href='delete_tenant.php?id=".$resultArray[$x]["id"]."'>Delete</a>"];
+    $resultArray[$x] += ["Edit"=>"<a href='edit_tenant.php?id=".$resultArray[$x]["id"]."'>edit</a>"];
 }
-$keys = ["Name","Phone","Email","Number of Bikes","Storage Locker Number","Number of Pets", "Lease Start", "Lease End","Delete"];
+for($x=0; $x < count($resultArray); $x += 1){
+    $resultArray[$x] += ["Delete"=>"<a href='delete_tenant.php?id=".$resultArray[$x]["id"]."'>delete</a>"];
+}
+$keys = ["Name","Phone","Email","Number of Bikes","Storage Locker Number","Number of Pets", "Lease Start", "Lease End","Edit","Delete"];
 
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 

@@ -1,0 +1,25 @@
+{# <div class="table-responsive-md" style="overflow: scroll;"> #}
+    <table class="table table-hover table-dark" >
+        <thead>
+            <tr>{% for key in keys %}
+                {% autoescape false %}
+                <th>{{ key }}</th>
+                {% endautoescape %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+
+            {%for rest in table %}
+            <tr>
+                {% for key in keys%}
+                {% autoescape false %}
+                <td style="td:before { content: "{{ key }}"; }">{{ rest[key] }}</td>
+                {% endautoescape %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <table>
+</div>
