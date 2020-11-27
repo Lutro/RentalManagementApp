@@ -76,7 +76,7 @@ if(!$valid){
     $data = $_POST;
     $dbh = get_database_object();
 
-    $tableOccupantQuery = $dbh->prepare("call updateOccupantInfo(?, ? ,?, ?, ?, ?,?)");
+    $tableOccupantQuery = $dbh->prepare("call updateOccupantInfo(?, ? ,?, ?, ?, ?, ?)");
 
     $name = $data["name"];
     $phone = $data["phone"];
