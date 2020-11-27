@@ -1,36 +1,39 @@
 {% extends "base.twig" %}
 {% block main %}
+
+<main class="d-flex flex-wrap">
 {% for suite in suites %}
 
-
-    <div class="card user-card-full">
-        <div class="row m-l-0 m-r-0">
-            <div class="col-sm-4 bg-c-lite-green user-profile">
-                <div class="card-block text-center text-white">
-                    <h6 class="f-w-600 lead">Suite {{ suite.suiteNumber }}</h6>
+<div class="card user-card-full col-md-6">
+    <div class="row m-l-0 m-r-0">
+        <div class="col-sm-4 bg-c-lite-green user-profile">
+            <div class="card-block text-center text-white">
+                <h6 class="f-w-600 lead">Suite {{ suite.suiteNumber }}</h6>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="card-block">
+                <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="m-b-10 f-w-600">Renter</p>
+                        <h6 class="text-muted f-w-400">{{ suite.name }}</h6>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="m-b-10 f-w-600">Rent Amount</p>
+                        <h6 class="text-muted f-w-400">{{ suite.rentAmount }}</h6>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="m-b-10 f-w-600">Status</p>
+                        <h6 class="text-muted f-w-400">Paid</h6>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-8">
-                            <div class="card-block">
-                                <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Renter</p>
-                                        <h6 class="text-muted f-w-400">{{ suite.name }}</h6>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Rent Amount</p>
-                                        <h6 class="text-muted f-w-400">{{ suite.rentAmount }}</h6>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Status</p>
-                                        <h6 class="text-muted f-w-400">Paid</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
         </div>
     </div>
+</div>
+
 
 {% endfor %}
+</main>
 {% endblock main %}
