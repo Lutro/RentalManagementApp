@@ -12,9 +12,7 @@ This project built a property management application called Renty, intended to b
 
 4) In phpMyAdmin, create a new database called propertymanagement 
 
-5) Navigate to the Import tab and import the propertymanagement.sql file to create all of the database tables and accompanying data 
-
-6) If error occurs with #1558 – Column count of mysql.proc is wrong....Please use mysql_upgrade to fix this error: 
+5) Navigate to the Import tab and import the propertymanagement.sql file to create all of the database tables and accompanying data. If error occurs with #1558 – Column count of mysql.proc is wrong....Please use mysql_upgrade to fix this error: 
 Go to xampp directory: cd /opt/lampp/bin 
 mysql_upgrade –u root –p 
 Restart xampp and you are good to go! 
