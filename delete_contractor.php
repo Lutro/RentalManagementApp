@@ -17,8 +17,13 @@ $success = $tenantIDQuery->execute();
 
 terminate_on_query_error($success); //program will terminate on error
 
+$renderParams = ["nav"=>navList(), 
+                 "address" =>address(), 
+                 "title"=>title(),
+                 "page_title"=>"Contractor Deleted", 
+                 "message" => "Contractor ".$filterName." deleted" ];
 if($success){                
-    render_page("error.twig",array("message" => "Contractor ".$filterName." deleted"));
+    render_page("error.twig", $renderParams);
     exit();
 }   
 
