@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2020 at 07:37 AM
+-- Generation Time: Nov 27, 2020 at 08:27 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
@@ -452,7 +452,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `removeTenant` (IN `tid` INT)  NO SQ
     COMMENT 'remove tenant'
 DELETE FROM occupant WHERE ID = tid$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `updateLivesIn` (IN `oid` INT, IN `min` INT, IN `mout` INT)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateLivesIn` (IN `oid` INT, IN `min` DATE, IN `mout` DATE)  NO SQL
 UPDATE livesin
 SET moveInDate = min,
 	moveOutDate = mout
@@ -515,7 +515,9 @@ INSERT INTO `activity_log` (`log_id`, `action`, `action_time`, `ID`, `leaseStart
 (6, 'Updated tenant', '2020-11-27 03:04:04', 17, '2015-02-01', '2040-02-01'),
 (7, 'Updated tenant', '2020-11-27 06:03:02', 7, '2008-06-01', '2028-06-01'),
 (8, 'Updated tenant', '2020-11-27 06:11:58', 1, '1992-02-17', '2022-02-17'),
-(9, 'Updated tenant', '2020-11-27 06:16:08', 1, '1992-02-17', '2022-02-17');
+(9, 'Updated tenant', '2020-11-27 06:16:08', 1, '1992-02-17', '2022-02-17'),
+(10, 'Updated tenant', '2020-11-27 07:14:02', 1, '1992-02-17', '2022-02-17'),
+(11, 'Updated tenant', '2020-11-27 07:23:14', 1, '1992-02-17', '2022-02-17');
 
 -- --------------------------------------------------------
 
@@ -732,7 +734,7 @@ CREATE TABLE `livesin` (
 --
 
 INSERT INTO `livesin` (`tenantID`, `suiteNumber`, `moveInDate`, `moveOutDate`) VALUES
-(1, 105, '0000-00-00', '0000-00-00'),
+(1, 105, '2020-12-03', '2020-11-25'),
 (2, 103, '2015-01-25', NULL),
 (3, 105, '1992-02-17', NULL),
 (4, 101, '2008-06-01', NULL),
@@ -799,7 +801,6 @@ INSERT INTO `occupant` (`ID`, `name`, `phone`, `email`, `birthdate`, `numberOfBi
 (8, 'Inez Oneil', '7781564125', 'inezone98@gmail.com', '1980-02-23', 1, 8),
 (9, 'Anna Young', '2365545648', 'annay11@gmail.com', '1992-11-11', 1, 9),
 (10, 'Lana Mccabe', '7782314258', 'lanamcc@hotmail.com', '1987-05-25', 2, 10),
-(11, 'Francisco Woodsss', '6045098833', 'franswoods@gmail.com', '1972-03-25', 1, 11),
 (12, 'Brogan Wiley', '7789651236', 'broganwiley@gmail.com', '1973-08-15', 2, 12),
 (13, 'Aleena Graves', '2361523695', 'aleenagrave94@gmail.com', '1994-09-25', 0, 13),
 (14, 'Saniyah Harrel', '2361852153', 'sanyharrel71@gmail.com', '1971-06-12', 3, 14),
@@ -927,7 +928,6 @@ INSERT INTO `tenant` (`ID`, `numberOfPets`, `leaseStart`, `leaseEnd`) VALUES
 (8, 0, '2005-06-01', '2028-06-01'),
 (9, 0, '2010-04-29', '2030-04-29'),
 (10, 1, '2000-12-31', '2025-12-31'),
-(11, 2, '1997-01-31', '2022-01-31'),
 (12, 1, '1999-03-31', '2024-03-31'),
 (13, 2, '1992-04-30', '2022-04-30'),
 (17, 1, '2015-02-01', '2040-02-01'),
@@ -1065,7 +1065,7 @@ ALTER TABLE `tenant`
 -- AUTO_INCREMENT for table `activity_log`
 --
 ALTER TABLE `activity_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `occupant`
@@ -1111,7 +1111,7 @@ ALTER TABLE `suite`
 -- Constraints for table `tenant`
 --
 ALTER TABLE `tenant`
-  ADD CONSTRAINT `tenant_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `occupant` (`ID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `tenant_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `occupant` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

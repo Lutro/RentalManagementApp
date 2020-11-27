@@ -53,14 +53,16 @@ function get_database_object(){
 //Check SQL connect status, and terminate if there is an error
 function terminate_on_connect_error(){
     if (mysqli_connect_errno()) {
-        render_page("error.twig", array( "message"=> mysqli_connect_error()));
+        render_page("error.twig", array("message"=> mysqli_connect_error()));
         exit();
     } 
 }
 //check if query if successful, terminate if there is an error
 function terminate_on_query_error($success){
     if(!$success){                
-        render_page("error.twig",array("message" => "Query error"));
+        render_page("error.twig",["nav"=>navList(),
+        "title"=>title(),
+        "message" => "Query error"]);
         exit();
     }   
 }
