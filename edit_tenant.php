@@ -9,15 +9,14 @@ $dbh = get_database_object();
 terminate_on_connect_error();
 
 $tenantID = (int)$_GET['id'];
-//echo gettype($tenantID);
+echo ($tenantID);
 $tableQuery = $dbh->prepare("call getTenantByID(?)");
 $tableQuery->bind_param('i', $tenantID);
 $success = $tableQuery->execute();
 $resultArray = $tableQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 
 $tableQuery->close();
-var_dump($resultArray);
-var_dump($_POST);
+
 
 $renderParams["suites"] = $resultArray;
  $resultArray;
@@ -25,11 +24,7 @@ $valid = true;
 $message = "";
 
 if($_SERVER['REQUEST_METHOD'] == "POST"){
-    // if(array_search(valueIfExists("restaurant",$_POST), $resultArray)){
-    //     $valid = false;
-    //     $message = $message."restaurant not valid </br>";
-    //     $renderParams["restaurant_class"] = "not_valid";
-    // }
+
     if(valueIfExists("name",$_POST)==""){
         $valid = false;
         $message = $message."name is not valid </br>";
@@ -61,22 +56,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         $message = $message."storage Locker Number not valid </br>";
         //$renderParams["phone_class"] = "not_valid";
     }
-    // if(valueIfExists("lastname",$_POST)==""){
-    //     $valid = false;
-    //     $message = $message."lastname not valid </br>";
-    //     $renderParams["lastname_class"] = "not_valid";
-    // }
-    // $refDate = "01-04-2020";
-    // if(!dateCheck(valueIfExists("timein",$_POST),$refDate )){
-    //     $valid = false;
-    //     $message = $message."Time in is not valid <br>";
-    //     $renderParams["timein_class"] = "not_valid";
-    // }
-    // if(!dateCheck(valueIfExists("timeout",$_POST),$refDate )){
-    //     $valid = false;
-    //     $message = $message."Time out is not valid <br>";
-    //     $renderParams["timeout_class"] = "not_valid";
-    // }
+
 
 } else {
     $valid = false;
@@ -94,9 +74,9 @@ if(!$valid){
 } else {
     
     $data = $_POST;
-    $db = get_database_object();
+    $dbh = get_database_object();
 
-    $tableOccupantQuery = $db->prepare("call updateOccupantInfo(?, ? ,?, ?, ?, ?)");
+    $tableOccupantQuery = $dbh->prepare("call updateOccupantInfo(?, ? ,?, ?, ?, ?,?)");
 
     $name = $data["name"];
     $phone = $data["phone"];
@@ -114,28 +94,17 @@ if(!$valid){
     $numberOfBikes = $data["numberOfBikes"];
     $storageLockerNumber =$data["storageLockerNumber"];
 
-    $tableOccupantQuery->bind_param('ssssii', $name, $phone, $email, $birthdate, 
+    $tableOccupantQuery->bind_param('issssii', $tenantID, $name, $phone, $email, $birthdate, 
                                         $numberOfBikes, $storageLockerNumber);
 
    $success = $tableOccupantQuery->execute();
    terminate_on_query_error($success); 
    $tableOccupantQuery->close();
 
-   //If fields are not empty add as tenant
 
-   //Get tenant ID
-   $tableTenantIDQuery = $db->prepare("call getOccupantID(?, ? ,?)");
-   $tableTenantIDQuery->bind_param('sss', $name, $phone, $email);
-   $success = $tableTenantIDQuery->execute();
-   terminate_on_query_error($success); 
 
-   $result = $tableTenantIDQuery->get_result();
-   $value = $result->fetch_object();
-   $tenantID = $value->ID;
-   $tableTenantIDQuery->close();
-
-   // add into tenant
-   $tableTenantQuery = $db->prepare("call insertTenant(?, ? ,?, ?)");
+  // add into tenant
+   $tableTenantQuery = $dbh->prepare("call updateTenantInfo(?, ? ,?, ?)");
    $numberOfPets = (int)$data["numberOfPets"];
    $leaseStart = $data["leaseStart"];
    $leaseEnd = $data["leaseEnd"];
@@ -145,16 +114,17 @@ if(!$valid){
    terminate_on_query_error($success);
    $tableTenantQuery->close();
    
-   // add into lives in
-   $tableLivesInQuery = $db->prepare("call insertLivesIn(?, ?, ?)");
+  // add into lives in
+   $tableLivesInQuery = $dbh->prepare("call updateLivesIn(?, ?, ?)");
    $suiteNumber = $data["suiteNumber"];
    $moveInDate = $data["moveInDate"];
+   $moveOutDate = $data["moveOutDate"];
    
-   $tableLivesInQuery->bind_param('iis', $tenantID, $suiteNumber, $moveInDate);
+   $tableLivesInQuery->bind_param('iss', $tenantID, $moveInDate, $moveOutDate);
    $success = $tableLivesInQuery->execute();
    terminate_on_query_error($success);
    $tableLivesInQuery->close();
 
-   $renderParams["message"] = "The new occupant " . $name . " has been added!\n\n";
+   $renderParams["message"] = "The tenant " . $name . " has been modified!\n\n";
    render_page('edit-tenant.twig',$renderParams);
 }
