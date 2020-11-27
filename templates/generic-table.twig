@@ -2,18 +2,19 @@
 
 {% block main %}
 <h1>{{ heading }}</h1>
-<form class="general" action="" method="GET">
+<form class="general" action="#" method="GET">
 
     {% for option in options  %}
-      <label name="{{ option }}">{{ option }}</label>
+      <label name="{{ option }}"> {{ option }} : </label>
+      {# <input name="{{ option }}"> #}
         <select class="_class" name="{{ option }}">
             {% for rest in inner_options %}
-            <option value="{{ rest[loop.index0] }}"> {{ rest[loop.index0] }} </option>            
+            <option value={{ rest }}> {{ rest }} </option>            
             {% endfor %}
         </select><br>
     {% endfor %}
 
-        <input type="submit" value="Submit">
+        <input type="submit" value="Search">
 
 </form>
 {% include "table-base.twig" %}

@@ -11,12 +11,12 @@ terminate_on_connect_error();
 // $options_sql = "SELECT DISTINCT " $option "FROM suite"
 
 
-$filterQuery = $dbh->prepare('call getSuiteBedroomNumbers()');
-$success = $filterQuery->execute();
-terminate_on_query_error($success); //program will terminate on error
-$bedroomsArray = $filterQuery->get_result()->fetch_all(MYSQLI_BOTH);
+// $filterQuery = $dbh->prepare('call getSuiteBedroomNumbers()');
+// $success = $filterQuery->execute();
+// terminate_on_query_error($success); //program will terminate on error
+// $bedroomsArray = $filterQuery->get_result()->fetch_all(MYSQLI_BOTH);
 
-$filterQuery->close();
+// $filterQuery->close();
 
 
 // just stub values for pagination
@@ -29,19 +29,19 @@ $conditions = [];
 $parameters = [];
 
 // conditional statements
-if (!empty($_GET['bedrooms']))
+if (!empty($_GET['Bedrooms']))
 {
     // here we are using LIKE with wildcard search
     // use it ONLY if really need it
-    $conditions[] = 'suite.bedrooms LIKE ?';
-    $parameters[] = '%'.$_GET['bedrooms']."%";
+    $conditions[] = 's.bedrooms = ?';
+    $parameters[] = '%'.$_GET['Bedrooms']."%";
 }
 
-if (!empty($_GET['bathrooms']))
+if (!empty(valueIfExists('Bathrooms', $_GET)))
 {
     // here we are using equality
-    $conditions[] = 'suite.bathrooms = ?';
-    $parameters[] = $_GET['bathrooms'];
+    $conditions[] = 's.bathrooms = ?';
+    $parameters[] = $_GET['Bathrooms'];
 }
 
 // if (!empty($_GET['car']))
@@ -62,7 +62,8 @@ if (!empty($_GET['bathrooms']))
 // }
 
 // the main query
-$sql = "SELECT s.suiteNumber as 'Suite Number', s.bedrooms as 'Bedrooms', s.bathrooms as 'Bathrooms', s.rentAmount as 'Rent Amount', ss.size as Size FROM suite s INNER JOIN suitesize ss ON s.bedrooms = ss.bedrooms AND
+$sql = "SELECT s.suiteNumber as 'Suite Number', s.bedrooms as 'Bedrooms', s.bathrooms as 'Bathrooms', s.rentAmount as 'Rent Amount',
+ ss.size as Size FROM suite s INNER JOIN suitesize ss ON s.bedrooms = ss.bedrooms AND
         s.bathrooms = ss.bathrooms";
 
 // a smart code to add all conditions, if any
@@ -79,10 +80,11 @@ $parameters[] = $limit;
 
 // the usual prepare/bind/execute/fetch routine
 $stmt = $dbh->prepare($sql);
+var_dump($sql);
 $stmt->bind_param(str_repeat("s", count($parameters)), ...$parameters);
 $stmt->execute();
 $resultArray = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
+var_dump($resultArray);
 
 
 // $tenantQuery = $dbh->prepare('call getSuites()');
@@ -96,13 +98,13 @@ for($x=0; $x < count($resultArray); $x += 1){
     $resultArray[$x] += ["View Suite"=>"<a href='generate_suite_card.php?suiteNumber=".$resultArray[$x]["Suite Number"]."'>View</a>"];
 } 
 $keys = ["Suite Number","Bedrooms","Bathrooms","Rent Amount","Size", "View Suite"];
-$options = ["bedrooms","bathrooms","hasMasterKey"];
+$options = ["Bedrooms","Bathrooms","hasMasterKey"];
 $renderParams = ["nav"=>navList(), 
                  "address" =>address(), 
                  "title"=>title(),
                  "page_title"=>"Apartment Suites", 
                  "heading"=>"Apartment Suites",
-                 "inner_options"=>$bedroomsArray,
+                 "inner_options"=>[0,1,2],
                  "table" => $resultArray,
                  "keys" => $keys,
                  "options" => $options ];
