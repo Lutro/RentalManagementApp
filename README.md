@@ -1,6 +1,5 @@
-# RentalManagementApp
+# Renty RentalManagementApp
 
-# Title: Renty Rental Management App
 This project built a property management application called Renty, intended to be used to manage the rental activities of a property. A building manager can access information about each suite and tenant, as well as maintenance-related information including suite inspections, repair orders, and contractors. The building manager can add, remove, or update this information through the interface. In addition, there is a section for rent administration which displays the rent payment status of each suite (paid/overdue/etc.) and another section for reports which details some statistics regarding the tenants, contractors, and maintenance, which can help to inform decisions like which contractor to hire for a repair or when to inspect a suite next. 
 
 # Subtitle: Additional information
