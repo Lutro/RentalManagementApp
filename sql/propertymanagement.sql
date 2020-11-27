@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2020 at 02:13 AM
+-- Generation Time: Nov 27, 2020 at 07:37 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
@@ -180,7 +180,7 @@ INNER JOIN occupant ON occupant.ID = hasparkingstall.tenantID
 INNER JOIN livesin ON livesin.tenantID = occupant.ID$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrders` ()  NO SQL
-SELECT repairID,suiteNumber, priority, type, startDate, endDate, inspectionDate
+SELECT repairID as 'Repair ID',suiteNumber as 'Suite Number', priority as 'Priority', type as 'Type', startDate as 'Start Date', endDate as 'End date', inspectionDate as 'Inspection Date'
 FROM generatesrepairorder$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getRepairOrdersPerSuite` ()  NO SQL
@@ -265,7 +265,7 @@ FROM (
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteAvgSpent` ()  NO SQL
     COMMENT 'how much money was spent on a suite (in repair costs)'
-SELECT suite.suiteNumber, COALESCE(avgSpent,0) as avgSpent
+SELECT suite.suiteNumber as 'Suite Number', COALESCE(avgSpent,0) as 'Average Spent ($)'
 FROM
 (SELECT suiteNumber, AVG(quoteAmount) as avgSpent
 FROM generatesrepairorder
@@ -273,7 +273,7 @@ INNER JOIN quote
 ON generatesrepairorder.type = quote.type AND generatesrepairorder.priority = quote.priority
 GROUP BY suiteNumber) as x 
 RIGHT JOIN suite ON x.suiteNumber = suite.suiteNumber
-ORDER BY suiteNumber ASC$$
+ORDER BY suite.suiteNumber ASC$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuiteBedroomNumbers` ()  NO SQL
     COMMENT 'get possible values of bedrooms column'
@@ -346,10 +346,10 @@ INNER JOIN occupant ON livesin.tenantID = occupant.ID$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSuitesRequiringInspection` ()  NO SQL
     COMMENT 'suites with inspections more than 6 months ago'
-SELECT hasinspection.suiteNumber, dateOfInspection, reason, description
+SELECT suiteNumber as 'Suite Number', MAX(dateOfInspection) as 'Last Date of Inspection', DATEDIFF(CURRENT_DATE(),MAX(dateOfInspection)) as 'Days Since Last Inspection'
 FROM hasinspection
-INNER JOIN suite ON suite.suiteNumber = hasinspection.suiteNumber
-WHERE DATE(hasinspection.dateOfInspection) < DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)$$
+GROUP BY suiteNumber
+ORDER BY MAX(dateOfInspection) ASC$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getTenantActivityLog` ()  NO SQL
 SELECT log_id as 'Action ID', action as Action, action_time as 'Action Time', ID as 'Tenant ID', leaseStart as 'Lease Start', leaseEnd as 'Lease End'
@@ -452,6 +452,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `removeTenant` (IN `tid` INT)  NO SQ
     COMMENT 'remove tenant'
 DELETE FROM occupant WHERE ID = tid$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateLivesIn` (IN `oid` INT, IN `min` INT, IN `mout` INT)  NO SQL
+UPDATE livesin
+SET moveInDate = min,
+	moveOutDate = mout
+WHERE tenantID = oid$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateOccupantInfo` (IN `oid` INT, IN `n` VARCHAR(50), IN `p` VARCHAR(20), IN `e` VARCHAR(50), IN `bd` DATE, IN `nob` INT, IN `sln` INT)  NO SQL
     COMMENT 'update occupant information'
 UPDATE occupant
@@ -471,6 +477,13 @@ SET bedrooms = beds,
     rentAmount = rent,
     hasMasterKey = mkey
 WHERE suiteNumber = sn$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateTenantInfo` (IN `oid` INT, IN `nop` INT, IN `ls` DATE, IN `le` DATE)  NO SQL
+UPDATE tenant
+SET numberOfPets = nop,
+    leaseStart = ls,
+    leaseEnd = le
+WHERE ID = oid$$
 
 DELIMITER ;
 
@@ -494,7 +507,15 @@ CREATE TABLE `activity_log` (
 --
 
 INSERT INTO `activity_log` (`log_id`, `action`, `action_time`, `ID`, `leaseStart`, `leaseEnd`) VALUES
-(1, 'insert', '2020-11-26 03:56:45', 131, '2019-12-12', NULL);
+(1, 'insert', '2020-11-26 03:56:45', 131, '2019-12-12', NULL),
+(2, 'Updated tenant', '2020-11-27 02:31:08', 4, '1995-01-26', '1995-02-25'),
+(3, 'Updated tenant', '2020-11-27 02:54:12', 11, '1997-01-31', '2022-01-31'),
+(4, 'Updated tenant', '2020-11-27 03:02:07', 17, '2015-02-01', '2040-02-01'),
+(5, 'Updated tenant', '2020-11-27 03:03:29', 17, '2015-02-01', '2040-02-01'),
+(6, 'Updated tenant', '2020-11-27 03:04:04', 17, '2015-02-01', '2040-02-01'),
+(7, 'Updated tenant', '2020-11-27 06:03:02', 7, '2008-06-01', '2028-06-01'),
+(8, 'Updated tenant', '2020-11-27 06:11:58', 1, '1992-02-17', '2022-02-17'),
+(9, 'Updated tenant', '2020-11-27 06:16:08', 1, '1992-02-17', '2022-02-17');
 
 -- --------------------------------------------------------
 
@@ -711,16 +732,16 @@ CREATE TABLE `livesin` (
 --
 
 INSERT INTO `livesin` (`tenantID`, `suiteNumber`, `moveInDate`, `moveOutDate`) VALUES
-(1, 105, '1992-02-17', NULL),
+(1, 105, '0000-00-00', '0000-00-00'),
 (2, 103, '2015-01-25', NULL),
 (3, 105, '1992-02-17', NULL),
 (4, 101, '2008-06-01', NULL),
-(7, 101, '2008-06-01', NULL),
+(7, 101, '0000-00-00', '0000-00-00'),
 (11, 304, '1997-01-31', NULL),
 (12, 202, '1999-03-31', NULL),
 (13, 405, '1992-04-30', NULL),
 (15, 201, '2020-03-31', NULL),
-(17, 402, '2015-02-01', NULL),
+(17, 402, '0000-00-00', '0000-00-00'),
 (19, 204, '2000-06-30', NULL),
 (21, 305, '2000-04-30', NULL);
 
@@ -768,17 +789,17 @@ CREATE TABLE `occupant` (
 --
 
 INSERT INTO `occupant` (`ID`, `name`, `phone`, `email`, `birthdate`, `numberOfBikes`, `storageLockerNumber`) VALUES
-(1, 'John Smith', '6045079833', 'jsmith325@gmail.com', '1972-03-25', 1, 1),
+(1, 'John Smith', '6045079833', 'jsmith325@gmail.com', '1972-03-25', 2, 1),
 (2, 'Linda Cho', '7781235893', 'lindac12@hotmail.com', '1988-07-12', 0, 2),
 (3, 'Shelly Wills', '6045826315', 'shellyw2@gmail.com', '1982-02-26', 0, 3),
 (4, 'Gordan Guo', '2365584771', 'gordongg@gmail.com', '1979-05-12', 2, 4),
 (5, 'Mike Powell', '2361259983', 'mikepw@hotmail.com', '1979-03-08', 0, 5),
 (6, 'Murray Wilkins', '2364528184', 'murwilk55@gmail.com', '1985-01-15', 0, 6),
-(7, 'Mia Macleod', '6042654815', 'miamac28@hotmail.com', '1990-12-28', 0, 7),
+(7, 'Mia Macleod', '6042654815', 'miamac28@hotmail.com', '1990-12-28', 2, 7),
 (8, 'Inez Oneil', '7781564125', 'inezone98@gmail.com', '1980-02-23', 1, 8),
 (9, 'Anna Young', '2365545648', 'annay11@gmail.com', '1992-11-11', 1, 9),
 (10, 'Lana Mccabe', '7782314258', 'lanamcc@hotmail.com', '1987-05-25', 2, 10),
-(11, 'Francisco Woods', '6045098833', 'franswoods@gmail.com', '1972-03-25', 1, 11),
+(11, 'Francisco Woodsss', '6045098833', 'franswoods@gmail.com', '1972-03-25', 1, 11),
 (12, 'Brogan Wiley', '7789651236', 'broganwiley@gmail.com', '1973-08-15', 2, 12),
 (13, 'Aleena Graves', '2361523695', 'aleenagrave94@gmail.com', '1994-09-25', 0, 13),
 (14, 'Saniyah Harrel', '2361852153', 'sanyharrel71@gmail.com', '1971-06-12', 3, 14),
@@ -790,8 +811,7 @@ INSERT INTO `occupant` (`ID`, `name`, `phone`, `email`, `birthdate`, `numberOfBi
 (20, 'Tara Simon', '2368521169', 'tarasimons@gmail.com', '1988-11-24', 1, 20),
 (21, 'Carmelo Barnes', '2361254559', 'carmelob32@gmail.com', '1995-10-25', 0, 21),
 (22, 'Malachi Marquez', '7787325698', 'malachimq22@gmail.com', '2003-08-24', 1, 22),
-(101, 'Test Occupant 1', '6043792646', 'test@gmail.com', '2020-11-26', 1, 3),
-(131, 'bobby brown', '6053223445', 'lost@gmail.com', '2020-03-24', 1, 1);
+(101, 'Test Occupant 1', '6043792646', 'test@gmail.com', '2020-11-26', 1, 3);
 
 -- --------------------------------------------------------
 
@@ -899,20 +919,19 @@ CREATE TABLE `tenant` (
 --
 
 INSERT INTO `tenant` (`ID`, `numberOfPets`, `leaseStart`, `leaseEnd`) VALUES
-(1, 1, '1992-02-17', '2022-02-17'),
+(1, 2, '1992-02-17', '2022-02-17'),
 (2, 0, '2015-01-25', '2025-01-25'),
-(4, 0, '1995-01-25', '2025-01-25'),
+(4, 1, '1995-01-26', '1995-02-25'),
 (5, 1, '1998-06-01', '2028-06-01'),
 (7, 1, '2008-06-01', '2028-06-01'),
 (8, 0, '2005-06-01', '2028-06-01'),
 (9, 0, '2010-04-29', '2030-04-29'),
 (10, 1, '2000-12-31', '2025-12-31'),
-(11, 1, '1997-01-31', '2022-01-31'),
+(11, 2, '1997-01-31', '2022-01-31'),
 (12, 1, '1999-03-31', '2024-03-31'),
 (13, 2, '1992-04-30', '2022-04-30'),
 (17, 1, '2015-02-01', '2040-02-01'),
-(19, 1, '2000-06-30', '2030-06-30'),
-(131, 3, '2019-12-12', '0000-00-00');
+(19, 1, '2000-06-30', '2030-06-30');
 
 --
 -- Triggers `tenant`
@@ -933,7 +952,7 @@ $$
 DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `au_data` AFTER UPDATE ON `tenant` FOR EACH ROW BEGIN
-  INSERT INTO data_log (action, action_time, ID, leaseStart, leaseEnd)
+  INSERT INTO activity_log (action, action_time, ID, leaseStart, leaseEnd)
   VALUES('Updated tenant', NOW(), NEW.ID, NEW.leaseStart, NEW.leaseEnd);
 END
 $$
@@ -1046,7 +1065,7 @@ ALTER TABLE `tenant`
 -- AUTO_INCREMENT for table `activity_log`
 --
 ALTER TABLE `activity_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `occupant`
