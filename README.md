@@ -12,47 +12,47 @@ This project built a property management application called Renty, intended to b
 
 4) In phpMyAdmin, create a new database called propertymanagement 
 
-5) Navigate to the Import tab and import the propertymanagement.sql file to create all of the database tables and accompanying data. If error occurs with #1558 – Column count of mysql.proc is wrong....Please use mysql_upgrade to fix this error: 
-Go to xampp directory: cd /opt/lampp/bin 
-mysql_upgrade –u root –p 
-Restart xampp and you are good to go! 
+5) Navigate to the Import tab and import the propertymanagement.sql file to create all of the database tables and accompanying data. If error occurs with #1558 – Column count of mysql.proc is wrong....Please use mysql_upgrade to fix this error:  
+Go to xampp directory: cd /opt/lampp/bin  
+mysql_upgrade –u root –p  
+Restart xampp and you are good to go!  
 
 9) In your internet browser, go to localhost/RentalManagementApp to see the application! 
 
 # List of SQL Queries Used in Demo
 
-**Projection query – view contractors**
-nav: Contractors > View Contractors 
+**Projection query – view contractors**  
+nav: Contractors > View Contractors  
 stored procedure: getContractors() 
 
-**Selection query – view suite**
-nav: Suites > View [suite] 
+**Selection query – view suite**  
+nav: Suites > View [suite]  
 stored procedure: getSuiteBySuiteNum() 
 
-**Join query – view tenants**
-nav: Tenants > View Tenants 
+**Join query – view tenants**  
+nav: Tenants > View Tenants  
 stored procedure: getTenants() 
 
-**Division query – suites all contractors have worked on**
-nav: Reports > Contractor Stats > Suites All Worked On 
+**Division query – suites all contractors have worked on**  
+nav: Reports > Contractor Stats > Suites All Worked On  
 stored procedure: getSuitesAllWorkedOn() 
 
-**Aggregation query – contractor work stats, last inspection of suites**
-nav: Reports > Contractor Stats > Work Stats; Reports > Inspection Stats > Last Inspection of Suites 
+**Aggregation query – contractor work stats, last inspection of suites**  
+nav: Reports > Contractor Stats > Work Stats; Reports > Inspection Stats > Last Inspection of Suites   
 stored procedure: getContractorWorkStats(); getSuitesRequiringInspection() 
 
-**Nested aggregation with group-by – average quote per quite**
-nav: Reports > Repair Stats > Average Quote Per Suite 
+**Nested aggregation with group-by – average quote per quite**  
+nav: Reports > Repair Stats > Average Quote Per Suite  
 stored procedure: getSuiteAvgSpent() 
 
-**Deletion operation – delete tenant**
-nav:  Tenants > View Tenants > Delete [tenant] 
+**Deletion operation – delete tenant**  
+nav:  Tenants > View Tenants > Delete [tenant]  
 stored procedure: removeTenant() 
 
-**Update operation – edit tenant**
-nav:  Tenants > View Tenants > Edit [tenant] 
+**Update operation – edit tenant**  
+nav:  Tenants > View Tenants > Edit [tenant]  
 stored procedure: updateTenantInfo() 
 
-**Extra features**
+**Extra features**  
 - Used bootstrap to implement the interface 
 - Triggers – activity logging (upon adding, deleting, or updating a tenant the action will be logged and stored in the activity log, located at Reports > Activity Log) 
