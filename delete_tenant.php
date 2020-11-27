@@ -13,9 +13,13 @@ $tenantIDQuery = $dbh->prepare('call removeTenant(?)');
 $tenantIDQuery->bind_param('i', $tenantID);
 $success = $tenantIDQuery->execute();
 
-
+$renderParams = ["nav"=>navList(), 
+                 "address" =>address(), 
+                 "title"=>title(),
+                 "page_title"=>"Contractor Deleted", 
+                 "message" => "Tenant with ID: ".$tenantID." deleted"];
 if($success){                
-    render_page("error.twig",array("message" => "Tenant with ID: ".$tenantID." deleted"));
+    render_page("error.twig", $renderParams);
     exit();
 }   
 //terminate_on_query_error($success); //program will terminate on error
