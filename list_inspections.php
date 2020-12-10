@@ -27,21 +27,3 @@ $renderParams = ["nav"=>navList(),
 
 
 render_page("repair-orders-maint.twig", $renderParams);
-    // $data = [
-    //     ['Microsoft Internet Explorer', 56.33],
-    //     ['Chrome', 24.03],
-    //     ['Firefox', 10.38],
-    //     ['Safari', 4.77],
-    //     ['Opera', 0.91],
-    //     ['Proprietary or Undetectable', 0.2]
-    // ];
-
-    // $ob = new Highchart();
-    // $ob->chart->renderTo('container');
-    // $ob->chart->type('pie');
-    // $ob->title->text('My Pie Chart');
-    // $ob->series(array(array("data"=>$data)));
-
-    // render_page('piechart.twig', [
-    //     'mypiechart' => $ob
-    // ]);

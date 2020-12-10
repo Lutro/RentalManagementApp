@@ -2,29 +2,22 @@
 
 {% block dashboard_content %}
 <h1>{{ heading }}</h1>
-<div class="table-responsive">
-    <table class="table table-hover table-dark">
-        <thead>
-        </thead>
-        <tbody>
-            <tr>{% for key in keys %}
-                {% autoescape false %}
-                 <th>{{ key }}</th>
-                {% endautoescape %}
-                {% endfor %}
-            </tr>
-            
-            {%for rest in table %}
-            <tr>
-                {% for key in keys%}
-                {% autoescape false %}
-                   <td>{{ rest[key] }}</td>
-                   {% endautoescape %}
-                {% endfor %}
-            </tr>            
-            {% endfor %}
-        </tbody>
+{% include "table-base.twig" %}
 
-    <table>
-    </div>
+<input id="plot_button" type="button" value="plot">
+   
+ <div class="Graph">
+         <div id="tempGraph"></div>
+
+      </div>
 {% endblock dashboard_content %}
+
+{% block javascripts %} 
+{% if chartType == "bar" %}
+    <script src="scripts/barChart.js" defer></script>   
+{% elseif chartType == "pie" %}
+    
+    <script src="scripts/pieChart.js" defer></script>   
+
+{% endif %}
+    {% endblock javascripts %}

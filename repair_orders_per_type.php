@@ -23,7 +23,8 @@ $renderParams = ["nav"=>navList(),
                  "page_title"=>"Repairs per Type", 
                  "heading"=>"Total Repair Orders Per Work Type",
                  "table" => $resultArray,
-                 "keys" => $keys ];
+                 "keys" => $keys,
+                "chartType" => "pie" ];
 
 
 render_page("repair-orders-stats.twig", $renderParams);

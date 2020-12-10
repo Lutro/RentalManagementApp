@@ -23,7 +23,8 @@ $renderParams = ["nav"=>navList(),
                  "page_title"=>"Average Repair Quote", 
                  "heading"=>"Average Repair Quote",
                  "table" => $resultArray,
-                 "keys" => $keys ];
+                 "keys" => $keys,
+                "chartType" => "pie" ];
 
 
 render_page("repair-orders-stats.twig", $renderParams);

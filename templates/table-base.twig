@@ -1,5 +1,5 @@
 {# <div class="table-responsive-md" style="overflow: scroll;"> #}
-    <table class="table table-hover table-dark" >
+    <table id="data" class="table table-hover table-dark" >
         <thead>
             <tr>{% for key in keys %}
                 {% autoescape false %}
@@ -14,7 +14,7 @@
             <tr>
                 {% for key in keys%}
                 {% autoescape false %}
-                <td style="td:before { content: "{{ key }}"; }">{{ rest[key] }}</td>
+                <td>{{ rest[key] }}</td>
                 {% endautoescape %}
                 {% endfor %}
             </tr>
